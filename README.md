@@ -1,4 +1,4 @@
-# UD6_01-NetworkUD6
+# UD6_02-DataBase
 
 <img width="50%" align="right" alt="Marta's github stats" src="https://media.giphy.com/media/jO2VAnKyAtgcSWxxVf/giphy.gif" />
 App de lista de tareas pendientes. La cual consume la API generada en este proyecto:
