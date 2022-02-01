@@ -5,7 +5,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 
-@Entity(tableName = "Tasks")
+@Entity(tableName = "tasks")
 class TaskEntity(
     @PrimaryKey
     @ColumnInfo(name = "taskId")
@@ -13,7 +13,7 @@ class TaskEntity(
     @ColumnInfo(name = "listIdFk")
     val listIdFk: Int,
     @ColumnInfo(name = "description")
-    val description: String,
+    val description: String?,
     @ColumnInfo(name = "state")
     val state: String,
     @ColumnInfo(name = "title")
