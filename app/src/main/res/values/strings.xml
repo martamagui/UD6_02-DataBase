@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">UD6_01-NetworkUD6</string>
+    <string name="hello_blank_fragment">Para la próxima entrega :D</string>
+    <string name="Title">Título</string>
+    <string name="new_task">Nueva tarea</string>
+    <string name="Task">Task</string>
+    <string name="TaskList">TaskList</string>
+    <string name="Description">Descripción</string>
+    <string name="save">Guardar</string>
+    <string name="detail_task">Detalles Tarea</string>
+    <string name="status">Estado</string>
+    <string name="deleted">Eliminado</string>
+    <string name="deleted_error">No se puedo eliminar</string>
+    <string name="connection_error">Error de conexion</string>
+    <string name="format_error">Error de formato en la petición</string>
+    <string name="no_task">Todavía no has añadido ninguna tarea</string>
+    <string name="no_lists">Comienza a añadir tu primera lista</string>
+</resources>

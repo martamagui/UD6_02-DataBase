@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/taskListFragment">
+
+    <fragment
+        android:id="@+id/taskListFragment"
+        android:name="com.marta.ud6_01_networkud6.usescases.tasks.TaskListFragment"
+        android:label="fragment_task_list"
+        tools:layout="@layout/fragment_task_list" >
+        <action
+            android:id="@+id/action_taskListFragment_to_tasksFragment"
+            app:destination="@id/tasksFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/tasksFragment"
+        android:name="com.marta.ud6_01_networkud6.usescases.tasks.TasksFragment"
+        android:label="fragment_tasks"
+        tools:layout="@layout/fragment_tasks" >
+        <argument
+            android:name="listIdFk"
+            app:argType="integer" />
+        <action
+            android:id="@+id/action_tasksFragment_to_addTaskFragment"
+            app:destination="@id/addTaskFragment" />
+        <action
+            android:id="@+id/action_tasksFragment_to_detailTaskFragment"
+            app:destination="@id/detailTaskFragment" />
+        <argument
+            android:name="listName"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/addTaskFragment"
+        android:name="com.marta.ud6_01_networkud6.usescases.tasks.AddTaskFragment"
+        android:label="fragment_add_task"
+        tools:layout="@layout/fragment_add_task" >
+        <argument android:name="listId"
+            app:argType="integer" />
+    </fragment>
+    <fragment
+        android:id="@+id/detailTaskFragment"
+        android:name="com.marta.ud6_01_networkud6.usescases.tasks.DetailTaskFragment"
+        android:label="DetailTaskFragment" >
+        <argument
+            android:name="taskId"
+            app:argType="integer" />
+    </fragment>
+</navigation>

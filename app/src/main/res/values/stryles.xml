@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="custom_big_titles" >
+        <item name="android:textColor">#CE191919</item>
+        <item name="android:textSize">46sp</item>
+        <item name="android:fontFamily">@font/urbanist_extrabold</item>
+    </style>
+    <style name="custom_titles" >
+        <item name="android:textColor">#CE393939</item>
+        <item name="android:textSize">30sp</item>
+        <item name="android:fontFamily">@font/urbanist_extrabold</item>
+    </style>
+    <style name="custom_body1" >
+        <item name="android:textColor">#CE1F1D1D</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:fontFamily">@font/urbanist_medium</item>
+    </style>
+    <style name="custom_button" >
+        <item name="android:textColor">@color/purple_500</item>
+        <item name="android:textSize">30sp</item>
+        <item name="android:fontFamily">@font/urbanist_extrabold</item>
+    </style>
+
+</resources>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <!--TODO Pon tu ip-->
+        <domain includeSubdomains="true">999.999.9.999</domain>
+    </domain-config>
+</network-security-config>
