@@ -4,6 +4,7 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
+import com.marta.ud6_01_networkud6.model.Task
 import com.marta.ud6_01_networkud6.provider.db.entitties.TaskEntity
 import com.marta.ud6_01_networkud6.provider.db.entitties.TaskListEntity
 import com.marta.ud6_01_networkud6.provider.db.entitties.UserEntity
@@ -18,11 +19,11 @@ interface DataBaseDao {
     fun findUserLists(userId: Int): List<TaskListEntity>
 
     @Query("SELECT *  FROM tasks WHERE listIdFk=:listIdFk")
-    fun findTaskFromList(listIdFk: Int): List<TaskListEntity>
+    fun findTaskFromList(listIdFk: Int): List<Task>
 
     //Inserts
     @Insert
-    fun addUser(user: UserEntity)
+    suspend fun addUser(user: UserEntity)
 
     @Insert
     fun createList(list: TaskListEntity)
