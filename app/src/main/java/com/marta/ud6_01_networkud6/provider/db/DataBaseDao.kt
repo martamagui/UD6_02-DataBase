@@ -1,6 +1,9 @@
 package com.marta.ud6_01_networkud6.provider.db
 
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.Query
 import com.marta.ud6_01_networkud6.model.Task
 import com.marta.ud6_01_networkud6.provider.db.entitties.TaskEntity
 import com.marta.ud6_01_networkud6.provider.db.entitties.TaskListEntity
@@ -10,34 +13,34 @@ import com.marta.ud6_01_networkud6.provider.db.entitties.UserEntity
 interface DataBaseDao {
     //SELECT
     @Query("SELECT * FROM user WHERE email= :email AND pwd= :pwd")
-    suspend fun findUser(email: String, pwd: String): UserEntity
+    fun findUser(email: String, pwd: String): UserEntity
 
     @Query("SELECT *  FROM tasklist WHERE userFk=:userId")
-    suspend fun findUserLists(userId: Int): List<TaskListEntity>
+    fun findUserLists(userId: Int): List<TaskListEntity>
 
     @Query("SELECT *  FROM tasks WHERE listIdFk=:listIdFk")
-    suspend fun findTaskFromList(listIdFk: Int): List<Task>
+    fun findTaskFromList(listIdFk: Int): List<Task>
 
     //Inserts
-    @Insert(onConflict = OnConflictStrategy.ABORT)
+    @Insert
     suspend fun addUser(user: UserEntity)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun createList(list: TaskListEntity)
+    @Insert
+    fun createList(list: TaskListEntity)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun addAllLists(lists: List<TaskListEntity>)
+    @Insert
+    fun addAllLists(lists:List<TaskListEntity>)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun createTask(task: TaskEntity)
+    @Insert
+    fun createTask(task: TaskEntity)
 
     //Delete
     @Delete
-    suspend fun deleteUser(user: UserEntity)
+    fun deleteUser(user: UserEntity)
 
     @Delete
-    suspend fun deleteTaskList(list: TaskListEntity)
+    fun deleteTaskList(list: TaskListEntity)
 
     @Delete
-    suspend fun deleteTask(task: TaskEntity)
+    fun deleteTask(task: TaskEntity)
 }

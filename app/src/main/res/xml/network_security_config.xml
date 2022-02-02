@@ -2,6 +2,6 @@
 <network-security-config>
     <domain-config cleartextTrafficPermitted="true">
         <!--TODO Pon tu ip-->
-        <domain includeSubdomains="true">192.168.1.132</domain>
+        <domain includeSubdomains="true">999.999.9.999</domain>
     </domain-config>
 </network-security-config>
