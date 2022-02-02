@@ -13,3 +13,5 @@
 .externalNativeBuild
 .cxx
 local.properties
+app/src/main/res/xml/network_security_config.xml
+app/src/main/java/com/marta/ud6_01_networkud6/provider/api/TaskApi.kt

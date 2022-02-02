@@ -14,9 +14,10 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
-        lifecycleScope.launch(Dispatchers.IO){
-            DataBaseRepository.getInstance(applicationContext).databaseDao().addUser(UserEntity(1,"Marta","Magui","pruebamail@gmail.eth","12354",true))
-        }
+
+//        lifecycleScope.launch(Dispatchers.IO){
+//            DataBaseRepository.getInstance(applicationContext).databaseDao().addUser(UserEntity(1,"Marta","Magui","pruebamail@gmail.eth","12354",true))
+//        }
         setContentView(binding.root)
     }
 }

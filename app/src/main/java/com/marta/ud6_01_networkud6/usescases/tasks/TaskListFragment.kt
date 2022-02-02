@@ -83,9 +83,7 @@ class TaskListFragment : Fragment() {
                 Toast.makeText(context, "FALIURE(╯°□°）╯︵ ┻━┻ Connection faliure ", Toast.LENGTH_SHORT).show()
                 Log.e("faliure","$t")
             }
-
         })
-
     }
     //Add
     private fun addList(title: String){

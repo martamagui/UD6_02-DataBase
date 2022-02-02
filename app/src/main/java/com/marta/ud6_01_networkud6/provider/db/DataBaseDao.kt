@@ -29,6 +29,9 @@ interface DataBaseDao {
     fun createList(list: TaskListEntity)
 
     @Insert
+    fun addAllLists(lists:List<TaskListEntity>)
+
+    @Insert
     fun createTask(task: TaskEntity)
 
     //Delete
