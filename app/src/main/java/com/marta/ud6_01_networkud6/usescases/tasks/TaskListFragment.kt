@@ -7,12 +7,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.marta.ud6_01_networkud6.databinding.FragmentTaskListBinding
 import com.marta.ud6_01_networkud6.model.TaskList
 import com.marta.ud6_01_networkud6.provider.api.TaskApi
+import com.marta.ud6_01_networkud6.provider.db.DataBaseRepository
+import com.marta.ud6_01_networkud6.provider.db.entitties.toListOfEntityList
 import com.marta.ud6_01_networkud6.usescases.common.TaskListAdapter
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -59,6 +64,9 @@ class TaskListFragment : Fragment() {
             binding.tvNoList.visibility = View.VISIBLE
         }
     }
+    private fun clearText(){
+        binding.tfNewList.setText("")
+    }
     //Req data
     private fun requestTaskList(){
         val service = TaskApi.service.getTaskLists()
@@ -74,6 +82,9 @@ class TaskListFragment : Fragment() {
                     response.body()?.let { lista.addAll(it) }
                     adapter.submitList(lista)
                     adapter.notifyDataSetChanged()
+                    lifecycleScope.launch(Dispatchers.IO){
+                        DataBaseRepository.getInstance(requireContext()).databaseDao().addAllLists(lista.toListOfEntityList())
+                    }
                     showHideMessage()
                 }else{
                     Toast.makeText(context, "RESPONSE(╯°□°）╯︵ ┻━┻ Connection faliure", Toast.LENGTH_SHORT).show()
@@ -96,6 +107,7 @@ class TaskListFragment : Fragment() {
                     adapter.submitList(lista)
                     adapter.notifyDataSetChanged()
                     showHideMessage()
+                    clearText()
                     Toast.makeText(context, "Saved", Toast.LENGTH_SHORT).show()
                 }else{
                     Toast.makeText(context, "(╯°□°）╯︵ ┻━┻ Format faliure", Toast.LENGTH_SHORT).show()
