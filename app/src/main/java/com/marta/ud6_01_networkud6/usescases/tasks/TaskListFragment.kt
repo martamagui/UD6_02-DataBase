@@ -153,9 +153,11 @@ class TaskListFragment : Fragment() {
         val call = service.enqueue(object : Callback<Int> {
             override fun onResponse(call: Call<Int>, response: Response<Int>) {
                 if (!response.isSuccessful) {
-                    updateRV(lista)
+
                     Log.d("Item", "(╯°□°）╯︵ ┻━┻ Formato incorrecto")
                     deleteListInDB(list)
+                    lista.remove(list)
+                    updateRV(lista)
                 } else {
                     requestTaskList()
                 }

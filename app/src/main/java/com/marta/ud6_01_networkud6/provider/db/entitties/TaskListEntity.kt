@@ -7,8 +7,8 @@ import com.marta.ud6_01_networkud6.model.TaskList
 
 @Entity(tableName = "tasklist")
 class TaskListEntity(
-    @PrimaryKey
-    @ColumnInfo(name = "listd")
+    @PrimaryKey(autoGenerate = false)
+    @ColumnInfo(name = "listId")
     val listId: Int,
     @ColumnInfo(name = "name")
     val name: String,
