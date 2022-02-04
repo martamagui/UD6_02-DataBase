@@ -16,20 +16,23 @@ interface DataBaseDao {
     suspend fun findUserLists(userId: Int): List<TaskListEntity>
 
     @Query("SELECT *  FROM tasks WHERE listIdFk=:listIdFk")
-    suspend fun findTaskFromList(listIdFk: Int): List<Task>
+    suspend fun findTaskFromList(listIdFk: Int): List<TaskEntity>
+
+    @Query("SELECT *  FROM tasklist")
+    suspend fun findAllLists(): List<TaskListEntity>
 
     //Inserts
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addUser(user: UserEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun createList(list: TaskListEntity)
+    suspend fun addList(list: TaskListEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addAllLists(lists:List<TaskListEntity>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun createTask(task: TaskEntity)
+    suspend fun addTask(task: TaskEntity)
 
     //Delete
     @Delete
