@@ -7,13 +7,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.marta.ud6_01_networkud6.databinding.FragmentTasksBinding
-import com.marta.ud6_01_networkud6.model.Task
 import com.marta.ud6_01_networkud6.provider.api.TaskApi
+import com.marta.ud6_01_networkud6.provider.db.DataBaseRepository
+import com.marta.ud6_01_networkud6.provider.db.entitties.TaskEntity
+import com.marta.ud6_01_networkud6.provider.db.entitties.TaskListEntity
 import com.marta.ud6_01_networkud6.usescases.common.TaskAdapter
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -23,7 +28,7 @@ class TasksFragment : Fragment() {
     private val binding
         get() = _binding!!
     private val args: TasksFragmentArgs by navArgs()
-    private var taskList: MutableList<Task> = mutableListOf()
+    private var tasks: MutableList<TaskEntity> = mutableListOf()
     private var listId: Int = 0
     private val adapter = TaskAdapter {
         toDetailView(it.taskId)
@@ -43,13 +48,12 @@ class TasksFragment : Fragment() {
         binding.rvTasks.layoutManager = LinearLayoutManager(context)
         binding.tvListTitle.text = args.listName
         listId = args.listIdFk
-        requestTask(listId)
+        getTasksFromDB()
         binding.fabAddTask.setOnClickListener {
             viewChangeAddTaskView(args.listIdFk)
         }
         binding.ivBin.setOnClickListener {
             deleteList(listId)
-            requestTask(listId)
         }
     }
 
@@ -58,14 +62,20 @@ class TasksFragment : Fragment() {
         _binding = null
     }
 
-    //Elements visibility
+    //UI
     private fun showHideMessage() {
-        Log.d("list size", taskList.size.toString())
-        if (taskList.size > 0) {
+        Log.d("list size", tasks.size.toString())
+        if (tasks.size > 0) {
             binding.tvNoTask.visibility = View.INVISIBLE
         } else {
             binding.tvNoTask.visibility = View.VISIBLE
         }
+    }
+
+    private fun updateRV() {
+        adapter.submitList(tasks)
+        showHideMessage()
+        adapter.notifyDataSetChanged()
     }
 
     //ViewChange
@@ -79,55 +89,42 @@ class TasksFragment : Fragment() {
         findNavController().navigate(action)
     }
 
-    //Request
-    private fun requestTask(listId: Int) {
-        val service = TaskApi.service.getTaskByListId(listId)
-        val call = service.enqueue(object : Callback<List<Task>> {
-            override fun onResponse(call: Call<List<Task>>, response: Response<List<Task>>) {
-                if (response.isSuccessful) {
-                    if (taskList.size > 0) {
-                        taskList.clear()
-                    }
-                    response.body()?.let { taskList.addAll(it) }
-                    adapter.submitList(taskList)
-                    adapter.notifyDataSetChanged()
-                    showHideMessage()
+    private fun deleteList(id: Int) {
+        val service = TaskApi.service.deleteList(id)
+        val call = service.enqueue(object : Callback<Int> {
+            override fun onResponse(call: Call<Int>, response: Response<Int>) {
+                if (!response.isSuccessful) {
+                    deleteListInDB(id)
+                    Toast.makeText(context, "Borrada", Toast.LENGTH_SHORT).show()
                 } else {
-                    Toast.makeText(context, "(╯°□°）╯︵ ┻━┻ Format faliure", Toast.LENGTH_SHORT)
+                    Toast.makeText(context, "La lista no pudo ser eliminada", Toast.LENGTH_SHORT)
                         .show()
                 }
             }
 
-            override fun onFailure(call: Call<List<Task>>, t: Throwable) {
-                Toast.makeText(
-                    context,
-                    "FALIURE(╯°□°）╯︵ ┻━┻ Connection faliure ",
-                    Toast.LENGTH_SHORT
-                ).show()
-                Log.e("faliure", "$t")
-            }
-        })
-    }
-
-
-    private fun deleteList(listId: Int) {
-        val service = TaskApi.service.deleteList(listId)
-        val call = service.enqueue(object : Callback<Int> {
-            override fun onResponse(call: Call<Int>, response: Response<Int>) {
-                if (!response.isSuccessful) {
-                    Log.d("Item", "(╯°□°）╯︵ ┻━┻ Formato incorrecto")
-                } else {
-                    binding.rvTasks.visibility = View.GONE
-                    binding.ivBin.visibility = View.GONE
-                    binding.tvListTitle.text = "Lista eliminada"
-                    binding.tvNoTask.text = "Esta lista fue eliminada"
-                }
-            }
-
             override fun onFailure(call: Call<Int>, t: Throwable) {
-                Log.d("Item", "(╯°□°）╯︵ ┻━┻ Formato incorrecto $t")
+                Toast.makeText(context, "No hay conexión", Toast.LENGTH_SHORT).show()
             }
         })
     }
+
+    //DB
+    private fun getTasksFromDB() {
+        lifecycleScope.launch(Dispatchers.IO) {
+            tasks.addAll(
+                DataBaseRepository.getInstance(requireContext()).databaseDao()
+                    .findTaskFromList(listId)
+            )
+            updateRV()
+        }
+    }
+
+    private fun deleteListInDB(id: Int) {
+        lifecycleScope.launch(Dispatchers.IO) {
+            DataBaseRepository.getInstance(requireContext()).databaseDao().deleteTaskListById(id)
+            updateRV()
+        }
+    }
+
 
 }

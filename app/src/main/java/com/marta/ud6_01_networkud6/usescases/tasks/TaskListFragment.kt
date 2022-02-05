@@ -125,7 +125,7 @@ class TaskListFragment : Fragment() {
                     lista.remove(list)
                     deleteListInDB(list)
                     updateRV(lista)
-                    Toast.makeText(context, "Deleted", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Borrada", Toast.LENGTH_SHORT).show()
                 } else {
                 }
             }
@@ -165,6 +165,7 @@ class TaskListFragment : Fragment() {
 
     fun getAllMyLists() {
         lifecycleScope.launch(Dispatchers.IO) {
+            lista.clear()
             lista.addAll(
                 DataBaseRepository.getInstance(requireContext()).databaseDao().findUserLists(userId)
             )

@@ -14,7 +14,7 @@ class TaskEntity(
     @ColumnInfo(name = "listIdFk")
     val listIdFk: Int,
     @ColumnInfo(name = "description")
-    val description: String?,
+    val description: String,
     @ColumnInfo(name = "state")
     val state: String,
     @ColumnInfo(name = "title")
