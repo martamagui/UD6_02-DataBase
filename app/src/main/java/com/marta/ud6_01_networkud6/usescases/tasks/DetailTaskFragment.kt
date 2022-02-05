@@ -31,7 +31,7 @@ class DetailTaskFragment : Fragment() {
         _binding = FragmentDetailTaskBinding.inflate(inflater, container, false)
         return binding.root
     }
-
+    //TODO add BD functionalities here
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val taskId= args.taskId
