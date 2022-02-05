@@ -49,7 +49,7 @@ class TaskListFragment : Fragment() {
         binding.rvTaskList.adapter = adapter
         binding.rvTaskList.layoutManager = LinearLayoutManager(context)
         binding.fabAddList.setOnClickListener {
-            if(checkFields()){
+            if (checkFields()) {
                 val text = binding.tfNewList.text.toString()
                 addList(text)
             }
@@ -83,7 +83,7 @@ class TaskListFragment : Fragment() {
 
     private fun checkFields(): Boolean {
         if (binding.tfNewList.text.toString().count() <= 0) {
-            Toast.makeText(context, "Texto vacío",Toast.LENGTH_SHORT)
+            Toast.makeText(context, "Texto vacío", Toast.LENGTH_SHORT)
             return false
         }
         return true
@@ -91,68 +91,37 @@ class TaskListFragment : Fragment() {
 
     //Request
     private fun addList(title: String) {
-        val newList: TaskList = TaskList((lista.get(0).listId + 1), title, 1)
-        val service = TaskApi.service.addList(newList)
-        val call = service.enqueue(object : Callback<Any> {
-            override fun onResponse(call: Call<Any>, response: Response<Any>) {
-                if (response.isSuccessful) {
-                    lista.add(newList.toEntityTaskList())
-                    updateRV(lista)
-                    addListToDB(newList)
-                    showHideMessage()
-                    clearText()
-                    Toast.makeText(context, "Saved", Toast.LENGTH_SHORT).show()
-                } else {
-                    Toast.makeText(context, "(╯°□°）╯︵ ┻━┻ Format faliure", Toast.LENGTH_SHORT)
-                        .show()
-                }
-            }
-
-            override fun onFailure(call: Call<Any>, t: Throwable) {
-                Toast.makeText(context, "(╯°□°）╯︵ ┻━┻ Connection faliure ", Toast.LENGTH_SHORT)
-                    .show()
-                Log.e("faliure", "$t")
-            }
-        })
+        var id: Int = 1
+        if(lista.size>0){
+            id = lista.get(0).listId + 1
+        }
+        val newList = TaskListEntity(id, title, 1)
+        lista.add(newList)
+        addListToDB(newList)
+        updateRV(lista)
+        showHideMessage()
+        clearText()
+        Toast.makeText(context, "Saved", Toast.LENGTH_SHORT).show()
     }
 
-    private fun deleteList(list: TaskListEntity) {
-        val service = TaskApi.service.deleteList(list.listId)
-        val call = service.enqueue(object : Callback<Int> {
-            override fun onResponse(call: Call<Int>, response: Response<Int>) {
-                if (!response.isSuccessful) {
-                    Log.d("Item", "(╯°□°）╯︵ ┻━┻ Formato incorrecto")
-                    lista.remove(list)
-                    deleteListInDB(list)
-                    updateRV(lista)
-                    Toast.makeText(context, "Borrada", Toast.LENGTH_SHORT).show()
-                } else {
-                }
-            }
-
-            override fun onFailure(call: Call<Int>, t: Throwable) {
-                Log.d("Item", "(╯°□°）╯︵ ┻━┻ Formato incorrecto $t")
-            }
-        })
-
-    }
 
     //DataBase
-    private fun addListToDB(lista: TaskList) {
+    private fun addListToDB(lista: TaskListEntity) {
         lifecycleScope.launch(Dispatchers.IO) {
             DataBaseRepository.getInstance(requireContext()).databaseDao()
-                .addList(lista.toEntityTaskList())
+                .addList(lista)
         }
     }
 
-    private fun deleteListInDB(lista: TaskListEntity) {
+    private fun deleteList(item: TaskListEntity) {
         lifecycleScope.launch(Dispatchers.IO) {
-            val list = lista
+            val list = item
             DataBaseRepository.getInstance(requireContext()).databaseDao()
                 .deleteTaskList(list)
             DataBaseRepository.getInstance(requireContext()).databaseDao()
                 .deleteTaskFromTaskList(list.listId)
         }
+        lista.remove(item)
     }
 
     private fun findListsInDB() {

@@ -89,24 +89,6 @@ class TasksFragment : Fragment() {
         findNavController().navigate(action)
     }
 
-    private fun deleteList(id: Int) {
-        val service = TaskApi.service.deleteList(id)
-        val call = service.enqueue(object : Callback<Int> {
-            override fun onResponse(call: Call<Int>, response: Response<Int>) {
-                if (!response.isSuccessful) {
-                    deleteListInDB(id)
-                    Toast.makeText(context, "Borrada", Toast.LENGTH_SHORT).show()
-                } else {
-                    Toast.makeText(context, "La lista no pudo ser eliminada", Toast.LENGTH_SHORT)
-                        .show()
-                }
-            }
-
-            override fun onFailure(call: Call<Int>, t: Throwable) {
-                Toast.makeText(context, "No hay conexión", Toast.LENGTH_SHORT).show()
-            }
-        })
-    }
 
     //DB
     private fun getTasksFromDB() {
@@ -119,7 +101,7 @@ class TasksFragment : Fragment() {
         }
     }
 
-    private fun deleteListInDB(id: Int) {
+    private fun deleteList(id: Int) {
         lifecycleScope.launch(Dispatchers.IO) {
             DataBaseRepository.getInstance(requireContext()).databaseDao().deleteTaskListById(id)
             updateRV()
