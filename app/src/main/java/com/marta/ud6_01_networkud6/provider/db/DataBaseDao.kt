@@ -1,7 +1,6 @@
 package com.marta.ud6_01_networkud6.provider.db
 
 import androidx.room.*
-import com.marta.ud6_01_networkud6.model.Task
 import com.marta.ud6_01_networkud6.provider.db.entitties.TaskEntity
 import com.marta.ud6_01_networkud6.provider.db.entitties.TaskListEntity
 import com.marta.ud6_01_networkud6.provider.db.entitties.UserEntity
@@ -17,6 +16,9 @@ interface DataBaseDao {
 
     @Query("SELECT *  FROM tasks WHERE listIdFk=:listIdFk")
     suspend fun findTaskFromList(listIdFk: Int): List<TaskEntity>
+
+    @Query("SELECT * FROM tasks WHERE taskId=:taskId")
+    suspend fun findTaskById(taskId: Int): TaskEntity
 
     @Query("SELECT *  FROM tasklist")
     suspend fun findAllLists(): List<TaskListEntity>
@@ -36,6 +38,10 @@ interface DataBaseDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addAllTask(tasks: List<TaskEntity>)
+
+    //Upddate
+    @Update
+    suspend fun updateTask(task: TaskEntity)
 
     //Delete
     @Delete

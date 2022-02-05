@@ -7,11 +7,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import com.marta.ud6_01_networkud6.R
 import com.marta.ud6_01_networkud6.databinding.FragmentDetailTaskBinding
 import com.marta.ud6_01_networkud6.model.Task
 import com.marta.ud6_01_networkud6.provider.api.TaskApi
+import com.marta.ud6_01_networkud6.provider.db.DataBaseRepository
+import com.marta.ud6_01_networkud6.provider.db.entitties.TaskEntity
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import retrofit2.Callback
 import retrofit2.Call
 import retrofit2.Response
@@ -22,7 +28,7 @@ class DetailTaskFragment : Fragment() {
     private val binding
         get() = _binding!!
     private val args: DetailTaskFragmentArgs by navArgs()
-    private lateinit var task: Task
+    private lateinit var task: TaskEntity
     private var editMode = false
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -31,10 +37,11 @@ class DetailTaskFragment : Fragment() {
         _binding = FragmentDetailTaskBinding.inflate(inflater, container, false)
         return binding.root
     }
+
     //TODO add BD functionalities here
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val taskId= args.taskId
+        val taskId = args.taskId
         requestTaskById(taskId)
         changeToViewDetailMode()
         binding.btnEdit.setOnClickListener {
@@ -47,14 +54,13 @@ class DetailTaskFragment : Fragment() {
             }
         }
         binding.btnDelete.setOnClickListener {
-            deleteTaskById(taskId)
+            deleteTaskById()
         }
-        binding.btnSave.setOnClickListener{
+        binding.btnSave.setOnClickListener {
             val description = binding.etDetailTaskDescription.text.toString()
             val title = binding.etDetailTaskTitle.text.toString()
-            val editedTask = Task(taskId,task.listIdFk,description,"Pendiente",title)
+            val editedTask = TaskEntity(taskId, task.listIdFk, description, "Pendiente", title)
             editTask(editedTask)
-
         }
     }
 
@@ -63,7 +69,7 @@ class DetailTaskFragment : Fragment() {
         _binding = null
     }
 
-    //Change to edit mode
+    //UI
     private fun changeToEditMode() {
         with(binding) {
             etDetailTaskTitleContainer.visibility = View.VISIBLE
@@ -86,7 +92,7 @@ class DetailTaskFragment : Fragment() {
         }
     }
 
-    private fun setTexts(task: Task) {
+    private fun setTexts(task: TaskEntity) {
         with(binding) {
             tvDetailTaskTitle.text = task.title
             tvDetailDescription.text = task.description
@@ -110,66 +116,33 @@ class DetailTaskFragment : Fragment() {
 
     //Request
     private fun requestTaskById(taskId: Int) {
-        val service = TaskApi.service.getTaskById(taskId)
-        val call = service.enqueue(object : Callback<Task> {
-            override fun onResponse(call: Call<Task>, response: Response<Task>) {
-                if (response.isSuccessful) {
-                    task = response.body()!!
-                    setTexts(task)
-                } else {
-                    Toast.makeText(context, "(╯°□°）╯︵ ┻━┻ Format faliure", Toast.LENGTH_SHORT)
-                        .show()
-                }
+        lifecycleScope.launch(Dispatchers.IO) {
+            task =
+                DataBaseRepository.getInstance(requireContext()).databaseDao().findTaskById(taskId)
+            withContext(Dispatchers.Main) {
+                setTexts(task)
             }
-
-            override fun onFailure(call: Call<Task>, t: Throwable) {
-                Toast.makeText(
-                    context,
-                    "FALIURE(╯°□°）╯︵ ┻━┻ Connection faliure ",
-                    Toast.LENGTH_SHORT
-                ).show()
-                Log.e("faliure", "$t")
-            }
-        })
+        }
     }
 
-    private fun deleteTaskById(taskId: Int) {
-        val service = TaskApi.service.deleteTask(taskId)
-        val call = service.enqueue(object : Callback<Any> {
-            override fun onResponse(call: Call<Any>, response: Response<Any>) {
-                if (response.isSuccessful) {
-                    viewTotaskWasDeleted()
-                } else {
-                    Toast.makeText(context, R.string.deleted_error, Toast.LENGTH_SHORT)
-                        .show()
-                }
+    private fun deleteTaskById() {
+        lifecycleScope.launch(Dispatchers.IO) {
+            DataBaseRepository.getInstance(requireContext()).databaseDao().deleteTask(task)
+            withContext(Dispatchers.Main) {
+                viewTotaskWasDeleted()
             }
-            override fun onFailure(call: Call<Any>, t: Throwable) {
-                Toast.makeText(context, R.string.connection_error, Toast.LENGTH_SHORT)
-                    .show()
-            }
-
-        })
+        }
     }
 
-    private fun editTask(editedTask: Task){
-
-        val service = TaskApi.service.editTask(editedTask.taskId,editedTask.title,editedTask.description)
-        val call = service.enqueue(object : Callback<Task>{
-            override fun onResponse(call: Call<Task>, response: Response<Task>) {
-                if(response.isSuccessful){
-                    task = response.body()!!
-                    setTexts(response.body()!!)
-                    changeToViewDetailMode()
-                }else{
-                    Toast.makeText(context, R.string.format_error, Toast.LENGTH_SHORT)
-                        .show()
-                }
+    private fun editTask(editedTask: TaskEntity) {
+        lifecycleScope.launch(Dispatchers.IO) {
+            DataBaseRepository.getInstance(requireContext()).databaseDao()
+                .updateTask(editedTask)
+            withContext(Dispatchers.Main) {
+                setTexts(editedTask)
+                changeToViewDetailMode()
             }
-            override fun onFailure(call: Call<Task>, t: Throwable) {
-                Toast.makeText(context, R.string.connection_error, Toast.LENGTH_SHORT)
-                .show()
-            }
-        })
+            task = editedTask
+        }
     }
 }
