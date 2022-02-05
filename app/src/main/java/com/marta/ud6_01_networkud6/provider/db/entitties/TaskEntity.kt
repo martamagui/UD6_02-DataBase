@@ -2,10 +2,11 @@ package com.marta.ud6_01_networkud6.provider.db.entitties
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 
-@Entity(tableName = "tasks")
+@Entity(tableName = "tasks", indices = [Index(value = ["taskId"], unique = true)])
 class TaskEntity(
     @PrimaryKey
     @ColumnInfo(name = "taskId")

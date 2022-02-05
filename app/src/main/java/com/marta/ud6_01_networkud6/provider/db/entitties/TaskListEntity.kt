@@ -2,10 +2,11 @@ package com.marta.ud6_01_networkud6.provider.db.entitties
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.Index
 import androidx.room.PrimaryKey
 import com.marta.ud6_01_networkud6.model.TaskList
 
-@Entity(tableName = "tasklist")
+@Entity(tableName = "tasklist", indices = [Index(value = ["listId"], unique = true)])
 class TaskListEntity(
     @PrimaryKey(autoGenerate = false)
     @ColumnInfo(name = "listId")

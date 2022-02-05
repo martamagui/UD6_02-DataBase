@@ -29,7 +29,7 @@ interface DataBaseDao {
     suspend fun addList(list: TaskListEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun addAllLists(lists:List<TaskListEntity>)
+    suspend fun addAllLists(lists: List<TaskListEntity>)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun addTask(task: TaskEntity)
@@ -40,6 +40,9 @@ interface DataBaseDao {
 
     @Delete
     suspend fun deleteTaskList(list: TaskListEntity)
+
+    @Query("DELETE FROM tasks WHERE listIdFk=:listId")
+    suspend fun deleteTaskFromTaskList(listId: Int)
 
     @Delete
     suspend fun deleteTask(task: TaskEntity)

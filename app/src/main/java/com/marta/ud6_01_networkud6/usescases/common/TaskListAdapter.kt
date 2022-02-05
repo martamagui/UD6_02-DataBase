@@ -8,11 +8,12 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.marta.ud6_01_networkud6.databinding.ItemTasklistBinding
 import com.marta.ud6_01_networkud6.model.TaskList
+import com.marta.ud6_01_networkud6.provider.db.entitties.TaskListEntity
 import com.marta.ud6_01_networkud6.usescases.common.TaskListAdapter.ViewHolder
 
 
-class TaskListAdapter(private val onListBinClicked: (TaskList) -> Unit, private val onListTitleClicked: (TaskList) -> Unit) :
-    ListAdapter<TaskList, ViewHolder>(TaskListItemCallBack()) {
+class TaskListAdapter(private val onListBinClicked: (TaskListEntity) -> Unit, private val onListTitleClicked: (TaskListEntity) -> Unit) :
+    ListAdapter<TaskListEntity, ViewHolder>(TaskListItemCallBack()) {
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -38,11 +39,11 @@ class TaskListAdapter(private val onListBinClicked: (TaskList) -> Unit, private 
         RecyclerView.ViewHolder(binding.root)
 }
 
-class TaskListItemCallBack : DiffUtil.ItemCallback<TaskList>() {
-    override fun areItemsTheSame(oldItem: TaskList, newItem: TaskList): Boolean {
+class TaskListItemCallBack : DiffUtil.ItemCallback<TaskListEntity>() {
+    override fun areItemsTheSame(oldItem: TaskListEntity, newItem: TaskListEntity): Boolean {
         return oldItem.listId == newItem.listId
     }
-    override fun areContentsTheSame(oldItem: TaskList, newItem: TaskList): Boolean {
+    override fun areContentsTheSame(oldItem: TaskListEntity, newItem: TaskListEntity): Boolean {
         return oldItem.listId == newItem.listId
     }
 }

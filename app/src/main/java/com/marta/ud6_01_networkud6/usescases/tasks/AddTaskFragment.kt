@@ -11,6 +11,7 @@ import androidx.navigation.fragment.navArgs
 import com.marta.ud6_01_networkud6.databinding.FragmentAddTaskBinding
 import com.marta.ud6_01_networkud6.model.Task
 import com.marta.ud6_01_networkud6.provider.api.TaskApi
+import com.marta.ud6_01_networkud6.provider.db.entitties.TaskListEntity
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -98,5 +99,6 @@ class AddTaskFragment : Fragment() {
             }
         })
     }
+
 
 }
