@@ -122,8 +122,8 @@ class TaskListFragment : Fragment() {
             val list = item
             DataBaseRepository.getInstance(requireContext()).databaseDao()
                 .deleteTaskList(list)
-            DataBaseRepository.getInstance(requireContext()).databaseDao()
-                .deleteTaskFromTaskList(list.listId)
+//            DataBaseRepository.getInstance(requireContext()).databaseDao()
+//                .deleteTaskFromTaskList(list.listId)
             lista.remove(item)
             withContext(Dispatchers.Main) {
                 updateRV()

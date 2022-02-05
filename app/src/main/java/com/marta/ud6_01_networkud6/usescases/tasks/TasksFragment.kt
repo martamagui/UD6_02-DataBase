@@ -1,5 +1,7 @@
-package com.marta.ud6_01_networkud6.usescases.tasks
+package com.marta.ud6_01_netwo
 
+import com.marta.ud6_01_networkud6.usescases.tasks.TasksFragmentArgs
+import com.marta.ud6_01_networkud6.usescases.tasks.TasksFragmentDirections
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -12,6 +14,7 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.marta.ud6_01_networkud6.databinding.FragmentTasksBinding
 import com.marta.ud6_01_networkud6.provider.db.DataBaseRepository
+import com.marta.ud6_01_networkud6.provider.db.entitties.ListWithTasks
 import com.marta.ud6_01_networkud6.provider.db.entitties.TaskEntity
 import com.marta.ud6_01_networkud6.usescases.common.TaskAdapter
 import kotlinx.coroutines.Dispatchers
@@ -24,6 +27,7 @@ class TasksFragment : Fragment() {
     private val binding
         get() = _binding!!
     private val args: TasksFragmentArgs by navArgs()
+    private lateinit var listAndTasks: ListWithTasks
     private var tasks: MutableList<TaskEntity> = mutableListOf()
     private var listId: Int = 0
     private val adapter = TaskAdapter {
@@ -40,7 +44,7 @@ class TasksFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        getTasksFromDB()
+//        getTasksFromDB()
         setUI()
     }
 
@@ -105,12 +109,15 @@ class TasksFragment : Fragment() {
     private fun getTasksFromDB() {
         lifecycleScope.launch(Dispatchers.IO) {
             tasks.clear()
-            tasks.addAll(
-                DataBaseRepository.getInstance(requireContext()).databaseDao()
-                    .findTaskFromList(listId)
-            )
-            withContext(Dispatchers.Main) {
-                updateRV()
+            listAndTasks = DataBaseRepository.getInstance(requireContext()).databaseDao()
+                .findTaskFromList(listId)
+            if (listAndTasks.tasks?.count()!! > 0) {
+                tasks.addAll(
+                    listAndTasks.tasks!!
+                )
+                withContext(Dispatchers.Main) {
+                    updateRV()
+                }
             }
         }
     }

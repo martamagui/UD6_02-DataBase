@@ -1,6 +1,7 @@
 package com.marta.ud6_01_networkud6.provider.db
 
 import androidx.room.*
+import com.marta.ud6_01_networkud6.provider.db.entitties.ListWithTasks
 import com.marta.ud6_01_networkud6.provider.db.entitties.TaskEntity
 import com.marta.ud6_01_networkud6.provider.db.entitties.TaskListEntity
 import com.marta.ud6_01_networkud6.provider.db.entitties.UserEntity
@@ -14,8 +15,9 @@ interface DataBaseDao {
     @Query("SELECT *  FROM tasklist WHERE userFk=:userId")
     suspend fun findUserLists(userId: Int): List<TaskListEntity>
 
-    @Query("SELECT *  FROM tasks WHERE listIdFk=:listIdFk")
-    suspend fun findTaskFromList(listIdFk: Int): List<TaskEntity>
+    @Transaction
+    @Query("SELECT *  FROM taskList WHERE listId=:listIdFk")
+    suspend fun findTaskFromList(listIdFk: Int): ListWithTasks
 
     @Query("SELECT * FROM tasks WHERE taskId=:taskId")
     suspend fun findTaskById(taskId: Int): TaskEntity
