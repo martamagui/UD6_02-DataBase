@@ -49,8 +49,10 @@ class TaskListFragment : Fragment() {
         binding.rvTaskList.adapter = adapter
         binding.rvTaskList.layoutManager = LinearLayoutManager(context)
         binding.fabAddList.setOnClickListener {
-            val text = binding.tfNewList.text.toString()
-            addList(text)
+            if(checkFields()){
+                val text = binding.tfNewList.text.toString()
+                addList(text)
+            }
         }
         getAllMyLists()
     }
@@ -60,7 +62,7 @@ class TaskListFragment : Fragment() {
         _binding = null
     }
 
-    // UI
+    // UI Related
     private fun showHideMessage() {
         if (lista.size > 0) {
             binding.tvNoList.visibility = View.INVISIBLE
@@ -79,11 +81,12 @@ class TaskListFragment : Fragment() {
         adapter.notifyDataSetChanged()
     }
 
-    //Fragment navigation
-    private fun viewChange(listId: Int, listName: String) {
-        val action =
-            TaskListFragmentDirections.actionTaskListFragmentToTasksFragment(listId, listName)
-        findNavController().navigate(action)
+    private fun checkFields(): Boolean {
+        if (binding.tfNewList.text.toString().count() <= 0) {
+            Toast.makeText(context, "Texto vacío",Toast.LENGTH_SHORT)
+            return false
+        }
+        return true
     }
 
     //Request
@@ -104,6 +107,7 @@ class TaskListFragment : Fragment() {
                         .show()
                 }
             }
+
             override fun onFailure(call: Call<Any>, t: Throwable) {
                 Toast.makeText(context, "(╯°□°）╯︵ ┻━┻ Connection faliure ", Toast.LENGTH_SHORT)
                     .show()
@@ -125,6 +129,7 @@ class TaskListFragment : Fragment() {
                 } else {
                 }
             }
+
             override fun onFailure(call: Call<Int>, t: Throwable) {
                 Log.d("Item", "(╯°□°）╯︵ ┻━┻ Formato incorrecto $t")
             }
@@ -145,7 +150,8 @@ class TaskListFragment : Fragment() {
             val list = lista
             DataBaseRepository.getInstance(requireContext()).databaseDao()
                 .deleteTaskList(list)
-            DataBaseRepository.getInstance(requireContext()).databaseDao().deleteTaskFromTaskList(list.listId)
+            DataBaseRepository.getInstance(requireContext()).databaseDao()
+                .deleteTaskFromTaskList(list.listId)
         }
     }
 
@@ -159,10 +165,19 @@ class TaskListFragment : Fragment() {
 
     fun getAllMyLists() {
         lifecycleScope.launch(Dispatchers.IO) {
-            lista.addAll(DataBaseRepository.getInstance(requireContext()).databaseDao().findUserLists(userId))
+            lista.addAll(
+                DataBaseRepository.getInstance(requireContext()).databaseDao().findUserLists(userId)
+            )
             //Más nueva a antigua
             lista.sortByDescending { it.listId }
             updateRV(lista)
         }
+    }
+
+    //Fragment navigation
+    private fun viewChange(listId: Int, listName: String) {
+        val action =
+            TaskListFragmentDirections.actionTaskListFragmentToTasksFragment(listId, listName)
+        findNavController().navigate(action)
     }
 }
