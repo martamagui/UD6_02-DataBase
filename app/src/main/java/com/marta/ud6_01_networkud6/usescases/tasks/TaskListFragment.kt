@@ -36,6 +36,7 @@ class TaskListFragment : Fragment() {
     }
     private val userId: Int = 1
 
+    //TODO Add a loading animation
     //TODO crear una función que compruebe los ids de las listas antes de guardarlas
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -50,9 +51,11 @@ class TaskListFragment : Fragment() {
         binding.rvTaskList.adapter = adapter
         binding.rvTaskList.layoutManager = LinearLayoutManager(context)
         binding.fabAddList.setOnClickListener {
-            if (checkFields()) {
+            if (checkField()) {
                 val text = binding.tfNewList.text.toString()
                 addList(text)
+            }else{
+                Toast.makeText(context, "Texto vacío", Toast.LENGTH_SHORT).show()
             }
         }
         getAllMyLists()
@@ -76,16 +79,15 @@ class TaskListFragment : Fragment() {
         binding.tfNewList.setText("")
     }
 
-    private fun updateRV(toListOfList: List<TaskListEntity>) {
+    private fun updateRV() {
         adapter.submitList(lista)
         showHideMessage()
         adapter.notifyDataSetChanged()
         showHideMessage()
     }
 
-    private fun checkFields(): Boolean {
+    private fun checkField(): Boolean {
         if (binding.tfNewList.text.toString().count() <= 0) {
-            Toast.makeText(context, "Texto vacío", Toast.LENGTH_SHORT)
             return false
         }
         return true
@@ -100,7 +102,7 @@ class TaskListFragment : Fragment() {
         val newList = TaskListEntity(id, title, 1)
         lista.add(newList)
         addListToDB(newList)
-        updateRV(lista)
+        updateRV()
         showHideMessage()
         clearText()
         Toast.makeText(context, "Guardado", Toast.LENGTH_SHORT).show()
@@ -124,12 +126,11 @@ class TaskListFragment : Fragment() {
                 .deleteTaskFromTaskList(list.listId)
             lista.remove(item)
             withContext(Dispatchers.Main) {
-                updateRV(lista)
+                updateRV()
             }
         }
     }
 
-    //TODO Add a loading animation
     fun getAllMyLists() {
         lifecycleScope.launch(Dispatchers.IO) {
             lista.clear()
@@ -139,11 +140,9 @@ class TaskListFragment : Fragment() {
             //Más nueva a antigua
             lista.sortByDescending { it.listId }
             withContext(Dispatchers.Main) {
-                updateRV(lista)
+                updateRV()
             }
-
         }
-
     }
 
     //Fragment navigation

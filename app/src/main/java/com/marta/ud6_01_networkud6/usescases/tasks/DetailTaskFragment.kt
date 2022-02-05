@@ -1,27 +1,19 @@
 package com.marta.ud6_01_networkud6.usescases.tasks
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import com.marta.ud6_01_networkud6.R
 import com.marta.ud6_01_networkud6.databinding.FragmentDetailTaskBinding
-import com.marta.ud6_01_networkud6.model.Task
-import com.marta.ud6_01_networkud6.provider.api.TaskApi
 import com.marta.ud6_01_networkud6.provider.db.DataBaseRepository
 import com.marta.ud6_01_networkud6.provider.db.entitties.TaskEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import retrofit2.Callback
-import retrofit2.Call
-import retrofit2.Response
-
 
 class DetailTaskFragment : Fragment() {
     private var _binding: FragmentDetailTaskBinding? = null
@@ -38,7 +30,6 @@ class DetailTaskFragment : Fragment() {
         return binding.root
     }
 
-    //TODO add BD functionalities here
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val taskId = args.taskId

@@ -6,22 +6,18 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.marta.ud6_01_networkud6.databinding.FragmentTasksBinding
-import com.marta.ud6_01_networkud6.provider.api.TaskApi
 import com.marta.ud6_01_networkud6.provider.db.DataBaseRepository
 import com.marta.ud6_01_networkud6.provider.db.entitties.TaskEntity
-import com.marta.ud6_01_networkud6.provider.db.entitties.TaskListEntity
 import com.marta.ud6_01_networkud6.usescases.common.TaskAdapter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import kotlinx.coroutines.withContext
+
 
 class TasksFragment : Fragment() {
     private var _binding: FragmentTasksBinding? = null
@@ -44,17 +40,8 @@ class TasksFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.rvTasks.adapter = adapter
-        binding.rvTasks.layoutManager = LinearLayoutManager(context)
-        binding.tvListTitle.text = args.listName
-        listId = args.listIdFk
         getTasksFromDB()
-        binding.fabAddTask.setOnClickListener {
-            viewChangeAddTaskView(args.listIdFk)
-        }
-        binding.ivBin.setOnClickListener {
-            deleteList(listId)
-        }
+        setUI()
     }
 
     override fun onDestroyView() {
@@ -63,6 +50,23 @@ class TasksFragment : Fragment() {
     }
 
     //UI
+    private fun setUI() {
+        setAdapter()
+        binding.tvListTitle.text = args.listName
+        listId = args.listIdFk
+        binding.fabAddTask.setOnClickListener {
+            viewChangeAddTaskView(args.listIdFk)
+        }
+        binding.ivBin.setOnClickListener {
+            deleteList(listId)
+        }
+    }
+
+    private fun setAdapter() {
+        binding.rvTasks.adapter = adapter
+        binding.rvTasks.layoutManager = LinearLayoutManager(context)
+    }
+
     private fun showHideMessage() {
         Log.d("list size", tasks.size.toString())
         if (tasks.size > 0) {
@@ -76,6 +80,13 @@ class TasksFragment : Fragment() {
         adapter.submitList(tasks)
         showHideMessage()
         adapter.notifyDataSetChanged()
+    }
+
+    private fun deletedListview() {
+        binding.tvListTitle.text = "Eliminado"
+        binding.fabAddTask.isEnabled = false
+        binding.ivBin.visibility = View.GONE
+
     }
 
     //ViewChange
@@ -98,14 +109,18 @@ class TasksFragment : Fragment() {
                 DataBaseRepository.getInstance(requireContext()).databaseDao()
                     .findTaskFromList(listId)
             )
-            updateRV()
+            withContext(Dispatchers.Main) {
+                updateRV()
+            }
         }
     }
 
     private fun deleteList(id: Int) {
         lifecycleScope.launch(Dispatchers.IO) {
             DataBaseRepository.getInstance(requireContext()).databaseDao().deleteTaskListById(id)
-            updateRV()
+            withContext(Dispatchers.Main) {
+                deletedListview()
+            }
         }
     }
 

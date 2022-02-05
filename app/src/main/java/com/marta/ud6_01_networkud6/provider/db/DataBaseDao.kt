@@ -20,8 +20,6 @@ interface DataBaseDao {
     @Query("SELECT * FROM tasks WHERE taskId=:taskId")
     suspend fun findTaskById(taskId: Int): TaskEntity
 
-    @Query("SELECT *  FROM tasklist")
-    suspend fun findAllLists(): List<TaskListEntity>
 
     //Inserts
     @Insert(onConflict = OnConflictStrategy.REPLACE)
