@@ -31,7 +31,7 @@ class TasksFragment : Fragment() {
     private var tasks: MutableList<TaskEntity> = mutableListOf()
     private var listId: Int = 0
     private val adapter = TaskAdapter {
-        toDetailView(it.taskId)
+        toDetailView(it.taskId!!)
     }
 
     override fun onCreateView(
@@ -93,6 +93,7 @@ class TasksFragment : Fragment() {
     //DB
     private fun getTasksFromDB() {
         lifecycleScope.launch(Dispatchers.IO) {
+            tasks.clear()
             tasks.addAll(
                 DataBaseRepository.getInstance(requireContext()).databaseDao()
                     .findTaskFromList(listId)

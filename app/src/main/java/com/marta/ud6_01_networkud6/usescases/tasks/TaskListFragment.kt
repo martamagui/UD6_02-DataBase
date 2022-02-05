@@ -20,6 +20,7 @@ import com.marta.ud6_01_networkud6.provider.db.entitties.toListOfList
 import com.marta.ud6_01_networkud6.usescases.common.TaskListAdapter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -79,6 +80,7 @@ class TaskListFragment : Fragment() {
         adapter.submitList(lista)
         showHideMessage()
         adapter.notifyDataSetChanged()
+        showHideMessage()
     }
 
     private fun checkFields(): Boolean {
@@ -92,7 +94,7 @@ class TaskListFragment : Fragment() {
     //Request
     private fun addList(title: String) {
         var id: Int = 1
-        if(lista.size>0){
+        if (lista.size > 0) {
             id = lista.get(0).listId + 1
         }
         val newList = TaskListEntity(id, title, 1)
@@ -101,7 +103,7 @@ class TaskListFragment : Fragment() {
         updateRV(lista)
         showHideMessage()
         clearText()
-        Toast.makeText(context, "Saved", Toast.LENGTH_SHORT).show()
+        Toast.makeText(context, "Guardado", Toast.LENGTH_SHORT).show()
     }
 
 
@@ -120,18 +122,14 @@ class TaskListFragment : Fragment() {
                 .deleteTaskList(list)
             DataBaseRepository.getInstance(requireContext()).databaseDao()
                 .deleteTaskFromTaskList(list.listId)
-        }
-        lista.remove(item)
-    }
-
-    private fun findListsInDB() {
-        lifecycleScope.launch(Dispatchers.IO) {
-            val lists: List<TaskListEntity> =
-                DataBaseRepository.getInstance(requireContext()).databaseDao().findAllLists()
-            updateRV(lists)
+            lista.remove(item)
+            withContext(Dispatchers.Main) {
+                updateRV(lista)
+            }
         }
     }
 
+    //TODO Add a loading animation
     fun getAllMyLists() {
         lifecycleScope.launch(Dispatchers.IO) {
             lista.clear()
@@ -140,8 +138,12 @@ class TaskListFragment : Fragment() {
             )
             //Más nueva a antigua
             lista.sortByDescending { it.listId }
-            updateRV(lista)
+            withContext(Dispatchers.Main) {
+                updateRV(lista)
+            }
+
         }
+
     }
 
     //Fragment navigation

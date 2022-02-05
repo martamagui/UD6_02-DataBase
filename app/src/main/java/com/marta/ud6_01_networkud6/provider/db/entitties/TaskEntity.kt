@@ -10,7 +10,7 @@ import com.google.gson.annotations.SerializedName
 class TaskEntity(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "taskId")
-    val taskId: Int,
+    val taskId: Int?,
     @ColumnInfo(name = "listIdFk")
     val listIdFk: Int,
     @ColumnInfo(name = "description")
