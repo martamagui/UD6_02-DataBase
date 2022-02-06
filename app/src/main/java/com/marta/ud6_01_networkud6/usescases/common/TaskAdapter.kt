@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.ListAdapter
 import com.marta.ud6_01_networkud6.provider.db.entitties.TaskEntity
 
 
-class TaskAdapter(private val onItemClicked: (TaskEntity) -> Unit) : ListAdapter<TaskEntity, TaskAdapter.ViewHolderTask>(TaskItemCallBack()) {
+class TaskAdapter(private val onItemClicked: (TaskEntity) -> Unit,  private val onCheckBoxClicked: (TaskEntity) -> Unit) : ListAdapter<TaskEntity, TaskAdapter.ViewHolderTask>(TaskItemCallBack()) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskAdapter.ViewHolderTask {
         val inflater = LayoutInflater.from(parent.context)
@@ -22,6 +22,12 @@ class TaskAdapter(private val onItemClicked: (TaskEntity) -> Unit) : ListAdapter
         val task = getItem(position)
         with(holder.binding){
             tvTask.text = task.title
+            if(task.state!="Pendiente"){
+                cbState.isChecked = true
+            }
+            cbState.setOnClickListener{
+                onCheckBoxClicked(task)
+            }
             root.setOnClickListener { onItemClicked(task) }
         }
     }

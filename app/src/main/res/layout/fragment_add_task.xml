@@ -11,6 +11,7 @@
         android:id="@+id/tv_new_task"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
         android:text="@string/new_task"
         android:textAppearance="@style/custom_big_titles"
         app:layout_constraintEnd_toEndOf="parent"
@@ -86,9 +87,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        android:background="@drawable/gradient"
         android:text="@string/save"
         android:textAppearance="@style/custom_button"
+        android:textColor="#A14917"
         app:layout_constraintEnd_toEndOf="@+id/filledTextField2"
         app:layout_constraintStart_toStartOf="@+id/filledTextField2"
         app:layout_constraintTop_toBottomOf="@+id/filledTextField2" />

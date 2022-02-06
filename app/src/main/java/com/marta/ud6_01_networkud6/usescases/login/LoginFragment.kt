@@ -1,4 +1,4 @@
-package com.marta.ud6_01_networkud6.usescases.lists
+package com.marta.ud6_01_networkud6.usescases.login
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment

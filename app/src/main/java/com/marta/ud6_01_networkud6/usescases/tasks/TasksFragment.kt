@@ -26,8 +26,8 @@ class TasksFragment : Fragment() {
     private val args: TasksFragmentArgs by navArgs()
     private var listId: Int = 0
     private var editMode = false
-    private val adapter = TaskAdapter {
-        toDetailView(it.taskId!!)
+    private val adapter = TaskAdapter({toDetailView(it)}){
+        cambiarEstado(it)
     }
 
     override fun onCreateView(
@@ -172,7 +172,7 @@ class TasksFragment : Fragment() {
     }
 
     private fun deleteList(id: Int) {
-        lifecycleScope.launch(Dispatchers.IO) {
+        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
             DataBaseRepository.getInstance(requireContext()).databaseDao().deleteListAndItsTasks(id)
             withContext(Dispatchers.Main) {
                 deletedListview()
@@ -182,6 +182,10 @@ class TasksFragment : Fragment() {
 
     private suspend fun editListDB(list: TaskListEntity) {
         DataBaseRepository.getInstance(requireContext()).databaseDao().updateList(list)
+    }
+
+    private suspend fun editTask(task: TaskEntity){
+        DataBaseRepository.getInstance(requireContext()).databaseDao().updateTask(task)
     }
 
     //Utils
@@ -209,9 +213,10 @@ class TasksFragment : Fragment() {
         return listToUpdate
     }
 
-    //Navigation
-    private fun toDetailView(taskId: Int) {
-        val action = TasksFragmentDirections.actionTasksFragmentToDetailTaskFragment(taskId)
+
+    //Navigation and Item actions
+    private fun toDetailView(task: TaskEntity) {
+        val action = TasksFragmentDirections.actionTasksFragmentToDetailTaskFragment(task.taskId!!)
         findNavController().navigate(action)
     }
 
@@ -219,4 +224,16 @@ class TasksFragment : Fragment() {
         val action = TasksFragmentDirections.actionTasksFragmentToAddTaskFragment(listId)
         findNavController().navigate(action)
     }
+    private fun cambiarEstado(task: TaskEntity){
+        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
+            var taskToUpdate= task
+            if(task.state == "Pendiente"){
+                taskToUpdate.state = "Terminada"
+            }else{
+                taskToUpdate.state = "Pendiente"
+            }
+            editTask(taskToUpdate)
+        }
+    }
+
 }
