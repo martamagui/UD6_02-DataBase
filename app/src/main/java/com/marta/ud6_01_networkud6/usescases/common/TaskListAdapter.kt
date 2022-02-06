@@ -43,6 +43,6 @@ class TaskListItemCallBack : DiffUtil.ItemCallback<TaskListEntity>() {
         return oldItem.listId == newItem.listId
     }
     override fun areContentsTheSame(oldItem: TaskListEntity, newItem: TaskListEntity): Boolean {
-        return oldItem.listId == newItem.listId
+        return oldItem.name == newItem.name
     }
 }

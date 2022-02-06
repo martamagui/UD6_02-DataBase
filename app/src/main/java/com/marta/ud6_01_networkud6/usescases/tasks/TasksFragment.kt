@@ -41,6 +41,7 @@ class TasksFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         listId = args.listIdFk
+        setAdapter()
         setUI()
     }
 
@@ -53,12 +54,9 @@ class TasksFragment : Fragment() {
     private fun setUI() {
         viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
             val listWithTasks = getListWithTasksFromDB()
-            //jeje
-            delay(200)
             hideShowProgressBar()
             getTasks(listWithTasks)
             setInUIListInformation(listWithTasks.list)
-            setAdapter()
         }
         disableEditUI()
         setButtons()
