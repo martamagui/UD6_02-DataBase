@@ -67,12 +67,13 @@ class TasksFragment : Fragment() {
         binding.rvTasks.layoutManager = LinearLayoutManager(context)
     }
 
-    private fun showHideMessage(listWithTasks: List<TaskEntity>?) =
+    private fun showHideMessage(listWithTasks: List<TaskEntity>?) {
         if (!listWithTasks.isNullOrEmpty()) {
             binding.tvNoTask.visibility = View.INVISIBLE
         } else {
             binding.tvNoTask.visibility = View.VISIBLE
         }
+    }
 
     private fun updateRV(listWithTasks: ListWithTasks) {
         if (listWithTasks.tasks?.size ?: -1 > 0) {
@@ -98,7 +99,6 @@ class TasksFragment : Fragment() {
         val action = TasksFragmentDirections.actionTasksFragmentToAddTaskFragment(listId)
         findNavController().navigate(action)
     }
-
 
     //DB
     private suspend fun getListWithTasksFromDB(): ListWithTasks {

@@ -50,6 +50,7 @@ class AddTaskFragment : Fragment() {
         if(binding.etTitleTask.text.toString().count()>0){
             return true
         }
+        Toast.makeText(context,"Rellena los campos",Toast.LENGTH_SHORT).show()
         return false;
     }
     private fun clearTxtFiles(){

@@ -39,17 +39,11 @@ class TaskListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.rvTaskList.adapter = adapter
-        binding.rvTaskList.layoutManager = LinearLayoutManager(context)
-        binding.fabAddList.setOnClickListener {
-            if (checkField()) {
-                val text = binding.tfNewList.text.toString()
-                addList(text)
-            }else{
-                Toast.makeText(context, "Texto vacío", Toast.LENGTH_SHORT).show()
-            }
+        setUI()
+        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
+            getAllMyLists()
+            updateRV()
         }
-        getAllMyLists()
     }
 
     override fun onDestroyView() {
@@ -57,7 +51,24 @@ class TaskListFragment : Fragment() {
         _binding = null
     }
 
-    // UI Related
+    // UI
+    private fun setUI() {
+        setAdapter()
+        binding.fabAddList.setOnClickListener {
+            if (checkField()) {
+                val text = binding.tfNewList.text.toString()
+                addList(text)
+            } else {
+                Toast.makeText(context, "Texto vacío", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun setAdapter() {
+        binding.rvTaskList.adapter = adapter
+        binding.rvTaskList.layoutManager = LinearLayoutManager(context)
+    }
+
     private fun showHideMessage() {
         if (lista.size > 0) {
             binding.tvNoList.visibility = View.INVISIBLE
@@ -73,8 +84,6 @@ class TaskListFragment : Fragment() {
     private fun updateRV() {
         adapter.submitList(lista)
         showHideMessage()
-        adapter.notifyDataSetChanged()
-        showHideMessage()
     }
 
     private fun checkField(): Boolean {
@@ -84,62 +93,54 @@ class TaskListFragment : Fragment() {
         return true
     }
 
-    //Request
-    private fun addList(title: String) {
+    //Utils
+    private fun getAnId(): Int {
         var id: Int = 1
         if (lista.size > 0) {
             id = lista.get(0).listId + 1
         }
-        val newList = TaskListEntity(id, title, 1)
+        return id
+    }
+
+    private fun addList(title: String) {
+        val newList = TaskListEntity(getAnId(), title, 1)
         lista.add(newList)
         lista.sortByDescending { it.listId }
-        addListToDB(newList)
-        updateRV()
-        showHideMessage()
+        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
+            addListToDB(newList)
+            updateRV()
+            showHideMessage()
+        }
         clearText()
         Toast.makeText(context, "Guardado", Toast.LENGTH_SHORT).show()
     }
 
 
     //DataBase
-    private fun addListToDB(lista: TaskListEntity) {
-        lifecycleScope.launch(Dispatchers.IO) {
-            DataBaseRepository.getInstance(requireContext()).databaseDao()
-                .addList(lista)
-        }
+    private suspend fun addListToDB(lista: TaskListEntity) {
+        DataBaseRepository.getInstance(requireContext()).databaseDao()
+            .addList(lista)
     }
 
     private fun deleteList(item: TaskListEntity) {
         lifecycleScope.launch(Dispatchers.IO) {
             val list = item
             DataBaseRepository.getInstance(requireContext()).databaseDao()
-                .deleteTaskList(list)
-//            DataBaseRepository.getInstance(requireContext()).databaseDao()
-//                .deleteTaskFromTaskList(list.listId)
+                .deleteListAndItsTasks(list.listId)
             lista.remove(item)
-            withContext(Dispatchers.Main) {
-                updateRV()
-            }
         }
     }
 
-    fun getAllMyLists() {
-        lifecycleScope.launch(Dispatchers.IO) {
-            lista.clear()
-            lista.addAll(
-                DataBaseRepository.getInstance(requireContext()).databaseDao().findUserLists(userId)
-            )
-            //Más nueva a antigua
-            lista.sortByDescending { it.listId }
-            withContext(Dispatchers.Main) {
-                updateRV()
-            }
-        }
+    private suspend fun getAllMyLists() {
+        lista.clear()
+        lista.addAll(
+            DataBaseRepository.getInstance(requireContext()).databaseDao().findUserLists(userId)
+        )
+        lista.sortByDescending { it.listId }
     }
 
-    //Fragment navigation
+    //Navigation
     private fun viewChange(list: TaskListEntity) {
-
         val action =
             TaskListFragmentDirections.actionTaskListFragmentToTasksFragment(list.listId, list.name)
         findNavController().navigate(action)

@@ -7,7 +7,7 @@ data class ListWithTasks(
     @Embedded val list: TaskListEntity,
     @Relation(
         parentColumn = "listId",
-        entityColumn = "taskId"
+        entityColumn = "listIdFk"
     )
     val tasks : List<TaskEntity>?
 )
