@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 
 @Entity(tableName = "tasks", indices = [Index(value = ["taskId"], unique = true)])
-class TaskEntity(
+data class TaskEntity(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "taskId")
     val taskId: Int?,

@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey
 import com.marta.ud6_01_networkud6.model.TaskList
 
 @Entity(tableName = "tasklist", indices = [Index(value = ["listId"], unique = true)])
-class TaskListEntity(
+data class TaskListEntity(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "listId")
     val listId: Int,
