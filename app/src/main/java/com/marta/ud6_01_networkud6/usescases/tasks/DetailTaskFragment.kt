@@ -126,13 +126,11 @@ class DetailTaskFragment : Fragment() {
     }
 
     private fun editTask(editedTask: TaskEntity) {
-        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
+        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
             DataBaseRepository.getInstance(requireContext()).databaseDao()
                 .updateTask(editedTask)
-            withContext(Dispatchers.Main) {
-                setTexts(editedTask)
-                changeToViewDetailMode()
-            }
+            setTexts(editedTask)
+            changeToViewDetailMode()
             task = editedTask
         }
     }

@@ -58,9 +58,13 @@ class TasksFragment : Fragment() {
             hideShowProgressBar()
             getTasks(listWithTasks)
             setInUIListInformation(listWithTasks.list)
+            setAdapter()
         }
-        setAdapter()
         disableEditUI()
+        setButtons()
+
+    }
+    private fun setButtons(){
         binding.fabAddTask.setOnClickListener {
             viewChangeAddTaskView(args.listIdFk)
         }
