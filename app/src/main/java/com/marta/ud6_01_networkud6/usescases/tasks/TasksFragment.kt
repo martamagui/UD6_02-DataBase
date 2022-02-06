@@ -53,6 +53,9 @@ class TasksFragment : Fragment() {
     private fun setUI() {
         viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
             val listWithTasks = getListWithTasksFromDB()
+            //jeje
+            delay(500)
+            hideShowProgressBar()
             getTasks(listWithTasks)
             setInUIListInformation(listWithTasks.list)
         }
@@ -78,12 +81,13 @@ class TasksFragment : Fragment() {
         }
     }
 
+
     private fun setInUIListInformation(list: TaskListEntity) {
         with(binding) {
             tvListTitle.text = list.name
             etTitle.setText(list.name)
             tvListDescription.text = list.description
-            tvPriority.text = "Prio.: ${list.priority.toString()}"
+            tvPriority.text = "Prio. : ${list.priority.toString()}"
             spinnerPriority.setSelection(list.priority - 1)
             tvListDate.text = list.date
         }
@@ -102,7 +106,15 @@ class TasksFragment : Fragment() {
             binding.tvNoTask.visibility = View.VISIBLE
         }
     }
-
+    private fun hideShowProgressBar(){
+        with(binding){
+            if(progressBarTask.visibility==View.INVISIBLE){
+                progressBarTask.visibility=View.VISIBLE
+            }else{
+                progressBarTask.visibility=View.INVISIBLE
+            }
+        }
+    }
     private fun updateRV(listWithTasks: ListWithTasks) {
         if (listWithTasks.tasks?.size ?: -1 > 0) {
             adapter.submitList(listWithTasks.tasks!!)

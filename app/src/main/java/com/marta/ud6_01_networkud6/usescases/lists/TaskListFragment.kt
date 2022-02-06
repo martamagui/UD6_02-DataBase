@@ -1,27 +1,23 @@
-package com.marta.ud6_01_networkud6.usescases.tasks
+package com.marta.ud6_01_networkud6.usescases.lists
 
-import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.annotation.RequiresApi
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.marta.ud6_01_networkud6.databinding.FragmentTaskListBinding
 import com.marta.ud6_01_networkud6.provider.db.DataBaseRepository
 import com.marta.ud6_01_networkud6.provider.db.entitties.TaskListEntity
 import com.marta.ud6_01_networkud6.usescases.common.TaskListAdapter
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import org.w3c.dom.Entity
 import java.text.SimpleDateFormat
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import java.util.*
 
 
@@ -34,7 +30,6 @@ class TaskListFragment : Fragment() {
     }
     private val userId: Int = 1
 
-    //TODO Add a loading animation
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -47,8 +42,11 @@ class TaskListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setUI()
         viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
-            val list : List<TaskListEntity> = getAllMyLists()
+            val list: List<TaskListEntity> = getAllMyLists()
+            //jeje
+            delay(700)
             updateRV(list)
+            hideShowProgressBar()
         }
     }
 
@@ -87,6 +85,16 @@ class TaskListFragment : Fragment() {
         binding.tfNewList.setText("")
     }
 
+    private fun hideShowProgressBar() {
+        with(binding) {
+            if (progressBar.visibility == View.INVISIBLE) {
+                progressBar.visibility = View.VISIBLE
+            } else {
+                progressBar.visibility = View.INVISIBLE
+            }
+        }
+    }
+
     private fun updateRV(list: List<TaskListEntity>) {
         adapter.submitList(list)
         showHideMessage(list)
@@ -100,17 +108,17 @@ class TaskListFragment : Fragment() {
     }
 
     //Utils
-    private fun getDateAndTime(): String{
+    private fun getDateAndTime(): String {
         val sdf = SimpleDateFormat("dd/M/yyyy")
-        val currentDate : String = sdf.format(Date())
+        val currentDate: String = sdf.format(Date())
         return currentDate
     }
 
     private fun addList(title: String) {
-        val newList = TaskListEntity(0, title, getDateAndTime(),"Sin descripción",5, userId)
+        val newList = TaskListEntity(0, title, getDateAndTime(), "Sin descripción", 5, userId)
         viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
             addListToDB(newList)
-            val list : List<TaskListEntity> = getAllMyLists()
+            val list: List<TaskListEntity> = getAllMyLists()
             updateRV(list)
             showHideMessage(list)
         }
@@ -129,21 +137,24 @@ class TaskListFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
             DataBaseRepository.getInstance(requireContext()).databaseDao()
                 .deleteListAndItsTasks(item.listId)
-            val list : List<TaskListEntity> = getAllMyLists()
+            val list: List<TaskListEntity> = getAllMyLists()
             updateRV(list)
         }
     }
 
     private suspend fun getAllMyLists(): List<TaskListEntity> {
-        val list: List<TaskListEntity> = DataBaseRepository.getInstance(requireContext()).databaseDao().findUserLists(userId)
+        val list: List<TaskListEntity> =
+            DataBaseRepository.getInstance(requireContext()).databaseDao().findUserLists(userId)
         list.sortedByDescending { it.listId }
         return list
     }
 
     //Navigation
     private fun viewChange(list: TaskListEntity) {
-        val action =
-            TaskListFragmentDirections.actionTaskListFragmentToTasksFragment(list.listId, list.name)
+        val action = TaskListFragmentDirections.actionTaskListFragmentToTasksFragment(
+            list.listId,
+            list.name
+        )
         findNavController().navigate(action)
     }
 }
