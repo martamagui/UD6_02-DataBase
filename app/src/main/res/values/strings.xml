@@ -15,4 +15,6 @@
     <string name="format_error">Error de formato en la petición</string>
     <string name="no_task">Todavía no has añadido ninguna tarea</string>
     <string name="no_lists">Comienza a añadir tu primera lista</string>
+    <string name="list_description">Aún no hay descripcion</string>
+    <string name="priority">Prioridad 0</string>
 </resources>

@@ -1,5 +1,6 @@
 package com.marta.ud6_01_networkud6.usescases.tasks;
 
+import android.opengl.Visibility
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -23,6 +24,7 @@ class TasksFragment : Fragment() {
         get() = _binding!!
     private val args: TasksFragmentArgs by navArgs()
     private var listId: Int = 0
+    private var editMode = false
     private val adapter = TaskAdapter {
         toDetailView(it.taskId!!)
     }
@@ -52,10 +54,14 @@ class TasksFragment : Fragment() {
     //UI
     private fun setUI() {
         setAdapter()
+        disableEditUI()
         binding.tvListTitle.text = args.listName
         listId = args.listIdFk
         binding.fabAddTask.setOnClickListener {
             viewChangeAddTaskView(args.listIdFk)
+        }
+        binding.ibEdit.setOnClickListener{
+            enableDiableEditMode()
         }
         binding.ivBin.setOnClickListener {
             deleteList(listId)
@@ -87,6 +93,28 @@ class TasksFragment : Fragment() {
         binding.fabAddTask.isEnabled = false
         binding.ivBin.visibility = View.GONE
         binding.rvTasks.visibility = View.GONE
+    }
+    private fun enableDiableEditMode(){
+        if(editMode){
+            disableEditUI()
+            editMode=false
+        }else{
+            editMode=true
+        }
+    }
+    private fun disableEditUI(){
+        with(binding){
+            tvListTitle.visibility = View.VISIBLE
+            tvListDescription.visibility = View.VISIBLE
+            tvPriority.visibility = View.VISIBLE
+            etTitle.visibility = View.INVISIBLE
+            etDescription.visibility = View.INVISIBLE
+            spinnerPriority.visibility = View.INVISIBLE
+            btnSaveEditedList.visibility = View.GONE
+        }
+    }
+    private fun enableEditUI(){
+
     }
 
     //Navigation

@@ -65,7 +65,7 @@ class TaskListFragment : Fragment() {
                 val text = binding.tfNewList.text.toString()
                 addList(text)
             } else {
-                Toast.makeText(context, "Texto vacío", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Aún no hay descripción", Toast.LENGTH_SHORT).show()
             }
         }
     }
