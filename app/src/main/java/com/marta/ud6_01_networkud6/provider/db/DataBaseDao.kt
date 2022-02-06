@@ -42,6 +42,8 @@ interface DataBaseDao {
 
     //Upddate
     @Update
+    suspend fun updateList(list: TaskListEntity)
+    @Update
     suspend fun updateTask(task: TaskEntity)
 
     //Delete

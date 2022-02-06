@@ -1,20 +1,23 @@
 package com.marta.ud6_01_networkud6.usescases.tasks;
 
-import android.opengl.Visibility
+import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import android.widget.LinearLayout
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.marta.ud6_01_networkud6.R
 import com.marta.ud6_01_networkud6.databinding.FragmentTasksBinding
 import com.marta.ud6_01_networkud6.provider.db.DataBaseRepository
 import com.marta.ud6_01_networkud6.provider.db.entitties.ListWithTasks
 import com.marta.ud6_01_networkud6.provider.db.entitties.TaskEntity
+import com.marta.ud6_01_networkud6.provider.db.entitties.TaskListEntity
 import com.marta.ud6_01_networkud6.usescases.common.TaskAdapter
 import kotlinx.coroutines.*
 
@@ -55,6 +58,7 @@ class TasksFragment : Fragment() {
     //UI
     private fun setUI() {
         setAdapter()
+        setSpinner()
         disableEditUI()
         binding.tvListTitle.text = args.listName
         listId = args.listIdFk
@@ -67,11 +71,17 @@ class TasksFragment : Fragment() {
         binding.ivBin.setOnClickListener {
             deleteList(listId)
         }
+        binding.ivSave.setOnClickListener{
+            enableDiableEditMode()
+        }
     }
 
     private fun setAdapter() {
         binding.rvTasks.adapter = adapter
         binding.rvTasks.layoutManager = LinearLayoutManager(context)
+    }
+
+    private fun setSpinner(){
     }
 
     private fun showHideMessage(listWithTasks: List<TaskEntity>?) {
@@ -94,16 +104,6 @@ class TasksFragment : Fragment() {
         binding.fabAddTask.isEnabled = false
         binding.ivBin.visibility = View.GONE
         binding.rvTasks.visibility = View.GONE
-    }
-
-    private fun enableDiableEditMode() {
-        if (editMode) {
-            disableEditUI()
-            editMode = false
-        } else {
-            enableEditUI()
-            editMode = true
-        }
     }
 
     private fun disableEditUI() {
@@ -167,12 +167,29 @@ class TasksFragment : Fragment() {
             }
         }
     }
+    private fun editListDB(name: String, newDescription : String, priority: Int) {
+        lifecycleScope.launch(Dispatchers.IO) {
+            var listToUpdate: TaskListEntity = getListWithTasksFromDB().list
+            listToUpdate.name = name
+            listToUpdate.description = newDescription
+            listToUpdate.priority = priority
+            DataBaseRepository.getInstance(requireContext()).databaseDao().updateList(listToUpdate)
+        }
+    }
 
     //Utils
-
     private fun getTasks(listWithTasks: ListWithTasks) {
         if (listWithTasks?.tasks?.count()!! > 0) {
             updateRV(listWithTasks)
+        }
+    }
+    private fun enableDiableEditMode() {
+        if (editMode) {
+            disableEditUI()
+            editMode = false
+        } else {
+            enableEditUI()
+            editMode = true
         }
     }
 }

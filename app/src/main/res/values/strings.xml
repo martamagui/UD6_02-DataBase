@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">UD6_01-NetworkUD6</string>
     <string name="hello_blank_fragment">Para la próxima entrega :D</string>
@@ -17,4 +18,11 @@
     <string name="no_lists">Comienza a añadir tu primera lista</string>
     <string name="list_description">Aún no hay descripcion</string>
     <string name="priority">Prioridad 0</string>
+    <string-array name="priorityarray" >
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>5</item>
+    </string-array>
 </resources>
