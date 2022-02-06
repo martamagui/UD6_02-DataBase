@@ -60,7 +60,7 @@ class AddTaskFragment : Fragment() {
         }
     }
 
-    //Api
+    //DB
     fun addTask(task: TaskEntity) {
         lifecycleScope.launch(Dispatchers.IO) {
             DataBaseRepository.getInstance(requireContext()).databaseDao().addTask(task)

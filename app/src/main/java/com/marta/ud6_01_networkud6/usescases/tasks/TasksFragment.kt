@@ -54,7 +54,7 @@ class TasksFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
             val listWithTasks = getListWithTasksFromDB()
             //jeje
-            delay(500)
+            delay(200)
             hideShowProgressBar()
             getTasks(listWithTasks)
             setInUIListInformation(listWithTasks.list)
@@ -117,7 +117,8 @@ class TasksFragment : Fragment() {
     }
     private fun updateRV(listWithTasks: ListWithTasks) {
         if (listWithTasks.tasks?.size ?: -1 > 0) {
-            adapter.submitList(listWithTasks.tasks!!)
+            var list = listWithTasks.tasks!!
+            adapter.submitList(list)
         }
         showHideMessage(listWithTasks.tasks)
     }
@@ -127,6 +128,7 @@ class TasksFragment : Fragment() {
         binding.fabAddTask.isEnabled = false
         binding.ivBin.visibility = View.GONE
         binding.rvTasks.visibility = View.GONE
+        binding.ibEdit.visibility = View.GONE
     }
 
     private fun disableEditUI() {
