@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.LinearLayout
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -60,7 +61,7 @@ class TasksFragment : Fragment() {
         binding.fabAddTask.setOnClickListener {
             viewChangeAddTaskView(args.listIdFk)
         }
-        binding.ibEdit.setOnClickListener{
+        binding.ibEdit.setOnClickListener {
             enableDiableEditMode()
         }
         binding.ivBin.setOnClickListener {
@@ -94,27 +95,50 @@ class TasksFragment : Fragment() {
         binding.ivBin.visibility = View.GONE
         binding.rvTasks.visibility = View.GONE
     }
-    private fun enableDiableEditMode(){
-        if(editMode){
+
+    private fun enableDiableEditMode() {
+        if (editMode) {
             disableEditUI()
-            editMode=false
-        }else{
-            editMode=true
+            editMode = false
+        } else {
+            enableEditUI()
+            editMode = true
         }
     }
-    private fun disableEditUI(){
-        with(binding){
+
+    private fun disableEditUI() {
+        with(binding) {
             tvListTitle.visibility = View.VISIBLE
             tvListDescription.visibility = View.VISIBLE
             tvPriority.visibility = View.VISIBLE
+            ivBin.visibility = View.VISIBLE
+            ibEdit.visibility = View.VISIBLE
+            ivBin.isEnabled = true
+            ibEdit.isEnabled =true
             etTitle.visibility = View.INVISIBLE
             etDescription.visibility = View.INVISIBLE
             spinnerPriority.visibility = View.INVISIBLE
-            btnSaveEditedList.visibility = View.GONE
+            ivSave.visibility = View.INVISIBLE
+            ivSave.isEnabled = false
+
         }
     }
-    private fun enableEditUI(){
 
+    private fun enableEditUI() {
+        with(binding) {
+            tvListTitle.visibility = View.INVISIBLE
+            tvListDescription.visibility = View.INVISIBLE
+            tvPriority.visibility = View.INVISIBLE
+            ivBin.visibility = View.INVISIBLE
+            ibEdit.visibility = View.INVISIBLE
+            ivBin.isEnabled = false
+            ibEdit.isEnabled =false
+            etTitle.visibility = View.VISIBLE
+            etDescription.visibility = View.VISIBLE
+            spinnerPriority.visibility = View.VISIBLE
+            ivSave.visibility = View.VISIBLE
+            ivSave.isEnabled = true
+        }
     }
 
     //Navigation
