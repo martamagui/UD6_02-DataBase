@@ -100,14 +100,6 @@ class TaskListFragment : Fragment() {
     }
 
     //Utils
-//    private fun getAnId(): Int {
-//        var id: Int = 1
-//        if (lista.size > 0) {
-//            id = lista.get(0).listId + 1
-//        }
-//        return id
-//    }
-
     private fun getDateAndTime(): String{
         val sdf = SimpleDateFormat("dd/M/yyyy")
         val currentDate : String = sdf.format(Date())
