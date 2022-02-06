@@ -107,7 +107,7 @@ class TaskListFragment : Fragment() {
     }
 
     private fun addList(title: String) {
-        val newList = TaskListEntity(0, title, getDateAndTime(),5, userId)
+        val newList = TaskListEntity(0, title, getDateAndTime(),"Sin descripción",5, userId)
         viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
             addListToDB(newList)
             val list : List<TaskListEntity> = getAllMyLists()

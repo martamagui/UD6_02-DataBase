@@ -78,7 +78,7 @@
                 android:layout_height="0dp"
                 android:layout_marginEnd="8dp"
                 android:text="@string/priority"
-                android:textAppearance="@style/custom_body1_b"
+                android:textAppearance="@style/custom_body1"
                 app:layout_constraintBottom_toBottomOf="@+id/tv_list_description"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/tv_list_description"
@@ -117,24 +117,34 @@
                 android:id="@+id/spinner_priority"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                tools:listitem="@layout/support_simple_spinner_dropdown_item"
                 android:entries="@array/priorityarray"
                 app:layout_constraintBottom_toBottomOf="@+id/tv_list_description"
                 app:layout_constraintEnd_toEndOf="@+id/tv_priority"
                 app:layout_constraintStart_toEndOf="@+id/tv_list_description"
                 app:layout_constraintTop_toTopOf="@+id/tv_list_description"
-                tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck" />
+                tools:ignore="TouchTargetSizeCheck,SpeakableTextPresentCheck"
+                tools:listitem="@layout/support_simple_spinner_dropdown_item" />
 
             <ImageButton
                 android:id="@+id/iv_save"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
+                android:layout_marginEnd="52dp"
                 android:background="@color/bg"
                 android:src="@drawable/ic_baseline_save_30"
                 app:layout_constraintBottom_toBottomOf="@+id/tv_list_title"
                 app:layout_constraintEnd_toEndOf="@+id/iv_bin"
                 app:layout_constraintTop_toTopOf="@+id/tv_list_title" />
+
+            <TextView
+                android:id="@+id/tv_list_date"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/no_date"
+                app:layout_constraintEnd_toEndOf="@+id/tv_list_description"
+                app:layout_constraintStart_toStartOf="@+id/tv_list_description"
+                app:layout_constraintTop_toBottomOf="@+id/tv_list_description" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

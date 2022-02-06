@@ -1,18 +1,15 @@
 package com.marta.ud6_01_networkud6.usescases.tasks;
 
-import android.annotation.SuppressLint
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ArrayAdapter
-import android.widget.LinearLayout
+import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.marta.ud6_01_networkud6.R
 import com.marta.ud6_01_networkud6.databinding.FragmentTasksBinding
 import com.marta.ud6_01_networkud6.provider.db.DataBaseRepository
 import com.marta.ud6_01_networkud6.provider.db.entitties.ListWithTasks
@@ -43,11 +40,8 @@ class TasksFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        listId = args.listIdFk
         setUI()
-        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
-            val listWithTasks = getListWithTasksFromDB()
-            getTasks(listWithTasks)
-        }
     }
 
     override fun onDestroyView() {
@@ -57,11 +51,13 @@ class TasksFragment : Fragment() {
 
     //UI
     private fun setUI() {
+        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
+            val listWithTasks = getListWithTasksFromDB()
+            getTasks(listWithTasks)
+            setInUIListInformation(listWithTasks.list)
+        }
         setAdapter()
-        setSpinner()
         disableEditUI()
-        binding.tvListTitle.text = args.listName
-        listId = args.listIdFk
         binding.fabAddTask.setOnClickListener {
             viewChangeAddTaskView(args.listIdFk)
         }
@@ -71,17 +67,32 @@ class TasksFragment : Fragment() {
         binding.ivBin.setOnClickListener {
             deleteList(listId)
         }
-        binding.ivSave.setOnClickListener{
+        binding.ivSave.setOnClickListener {
             enableDiableEditMode()
+            viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
+                val editedList = createEditedList()
+                editListDB(editedList)
+                setInUIListInformation(editedList)
+            }
+            Toast.makeText(context,"Cambios aplicados", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    private fun setInUIListInformation(list: TaskListEntity) {
+        with(binding) {
+            tvListTitle.text = list.name
+            etTitle.setText(list.name)
+            tvListDescription.text = list.description
+            tvPriority.text = "Prio.: ${list.priority.toString()}"
+            spinnerPriority.setSelection(list.priority - 1)
+            tvListDate.text = list.date
+        }
+
     }
 
     private fun setAdapter() {
         binding.rvTasks.adapter = adapter
         binding.rvTasks.layoutManager = LinearLayoutManager(context)
-    }
-
-    private fun setSpinner(){
     }
 
     private fun showHideMessage(listWithTasks: List<TaskEntity>?) {
@@ -114,7 +125,7 @@ class TasksFragment : Fragment() {
             ivBin.visibility = View.VISIBLE
             ibEdit.visibility = View.VISIBLE
             ivBin.isEnabled = true
-            ibEdit.isEnabled =true
+            ibEdit.isEnabled = true
             etTitle.visibility = View.INVISIBLE
             etDescription.visibility = View.INVISIBLE
             spinnerPriority.visibility = View.INVISIBLE
@@ -132,24 +143,13 @@ class TasksFragment : Fragment() {
             ivBin.visibility = View.INVISIBLE
             ibEdit.visibility = View.INVISIBLE
             ivBin.isEnabled = false
-            ibEdit.isEnabled =false
+            ibEdit.isEnabled = false
             etTitle.visibility = View.VISIBLE
             etDescription.visibility = View.VISIBLE
             spinnerPriority.visibility = View.VISIBLE
             ivSave.visibility = View.VISIBLE
             ivSave.isEnabled = true
         }
-    }
-
-    //Navigation
-    private fun toDetailView(taskId: Int) {
-        val action = TasksFragmentDirections.actionTasksFragmentToDetailTaskFragment(taskId)
-        findNavController().navigate(action)
-    }
-
-    private fun viewChangeAddTaskView(listId: Int) {
-        val action = TasksFragmentDirections.actionTasksFragmentToAddTaskFragment(listId)
-        findNavController().navigate(action)
     }
 
     //DB
@@ -167,14 +167,9 @@ class TasksFragment : Fragment() {
             }
         }
     }
-    private fun editListDB(name: String, newDescription : String, priority: Int) {
-        lifecycleScope.launch(Dispatchers.IO) {
-            var listToUpdate: TaskListEntity = getListWithTasksFromDB().list
-            listToUpdate.name = name
-            listToUpdate.description = newDescription
-            listToUpdate.priority = priority
-            DataBaseRepository.getInstance(requireContext()).databaseDao().updateList(listToUpdate)
-        }
+
+    private suspend fun editListDB(list: TaskListEntity) {
+        DataBaseRepository.getInstance(requireContext()).databaseDao().updateList(list)
     }
 
     //Utils
@@ -183,6 +178,7 @@ class TasksFragment : Fragment() {
             updateRV(listWithTasks)
         }
     }
+
     private fun enableDiableEditMode() {
         if (editMode) {
             disableEditUI()
@@ -191,5 +187,24 @@ class TasksFragment : Fragment() {
             enableEditUI()
             editMode = true
         }
+    }
+
+    private suspend fun createEditedList(): TaskListEntity {
+        var listToUpdate: TaskListEntity = getListWithTasksFromDB().list
+        listToUpdate.name = binding.etTitle.text.toString()
+        listToUpdate.description = binding.etDescription.text.toString()
+        listToUpdate.priority = binding.spinnerPriority.selectedItemPosition + 1
+        return listToUpdate
+    }
+
+    //Navigation
+    private fun toDetailView(taskId: Int) {
+        val action = TasksFragmentDirections.actionTasksFragmentToDetailTaskFragment(taskId)
+        findNavController().navigate(action)
+    }
+
+    private fun viewChangeAddTaskView(listId: Int) {
+        val action = TasksFragmentDirections.actionTasksFragmentToAddTaskFragment(listId)
+        findNavController().navigate(action)
     }
 }

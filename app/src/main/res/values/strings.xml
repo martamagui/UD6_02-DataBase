@@ -18,6 +18,7 @@
     <string name="no_lists">Comienza a añadir tu primera lista</string>
     <string name="list_description">Aún no hay descripcion</string>
     <string name="priority">Prioridad 0</string>
+    <string name="no_date">Fecha desconocida</string>
     <string-array name="priorityarray" >
         <item>1</item>
         <item>2</item>
