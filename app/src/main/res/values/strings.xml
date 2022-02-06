@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">UD6_01-NetworkUD6</string>
+    <string name="app_name">UD6_02-DataBaseUD6</string>
     <string name="hello_blank_fragment">Para la próxima entrega :D</string>
     <string name="Title">Título</string>
     <string name="new_task">Nueva tarea</string>
