@@ -44,7 +44,7 @@ class TaskListFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
             val list: List<TaskListEntity> = getAllMyLists()
             //jeje
-            delay(700)
+            delay(520)
             updateRV(list)
             hideShowProgressBar()
         }
