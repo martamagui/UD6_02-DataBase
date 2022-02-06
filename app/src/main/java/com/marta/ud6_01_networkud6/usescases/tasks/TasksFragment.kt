@@ -1,7 +1,5 @@
-package com.marta.ud6_01_netwo
+package com.marta.ud6_01_networkud6.usescases.tasks;
 
-import com.marta.ud6_01_networkud6.usescases.tasks.TasksFragmentArgs
-import com.marta.ud6_01_networkud6.usescases.tasks.TasksFragmentDirections
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -17,9 +15,8 @@ import com.marta.ud6_01_networkud6.provider.db.DataBaseRepository
 import com.marta.ud6_01_networkud6.provider.db.entitties.ListWithTasks
 import com.marta.ud6_01_networkud6.provider.db.entitties.TaskEntity
 import com.marta.ud6_01_networkud6.usescases.common.TaskAdapter
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
+import okhttp3.internal.wait
 
 
 class TasksFragment : Fragment() {
@@ -27,7 +24,7 @@ class TasksFragment : Fragment() {
     private val binding
         get() = _binding!!
     private val args: TasksFragmentArgs by navArgs()
-    private lateinit var listAndTasks: ListWithTasks
+    private var listAndTasks: ListWithTasks? = null
     private var tasks: MutableList<TaskEntity> = mutableListOf()
     private var listId: Int = 0
     private val adapter = TaskAdapter {
@@ -39,13 +36,14 @@ class TasksFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentTasksBinding.inflate(inflater, container, false)
+        getListWithTasksFromDB()
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-//        getTasksFromDB()
         setUI()
+        getTasks()
     }
 
     override fun onDestroyView() {
@@ -93,7 +91,7 @@ class TasksFragment : Fragment() {
 
     }
 
-    //ViewChange
+    //Navigation
     private fun toDetailView(taskId: Int) {
         val action = TasksFragmentDirections.actionTasksFragmentToDetailTaskFragment(taskId)
         findNavController().navigate(action)
@@ -106,19 +104,11 @@ class TasksFragment : Fragment() {
 
 
     //DB
-    private fun getTasksFromDB() {
+    fun getListWithTasksFromDB() {
         lifecycleScope.launch(Dispatchers.IO) {
             tasks.clear()
             listAndTasks = DataBaseRepository.getInstance(requireContext()).databaseDao()
                 .findTaskFromList(listId)
-            if (listAndTasks.tasks?.count()!! > 0) {
-                tasks.addAll(
-                    listAndTasks.tasks!!
-                )
-                withContext(Dispatchers.Main) {
-                    updateRV()
-                }
-            }
         }
     }
 
@@ -131,5 +121,14 @@ class TasksFragment : Fragment() {
         }
     }
 
+    //Utils
 
+    private fun getTasks() {
+        if (listAndTasks?.tasks?.count()!! > 0) {
+            tasks.addAll(
+                listAndTasks?.tasks!!
+            )
+            updateRV()
+        }
+    }
 }

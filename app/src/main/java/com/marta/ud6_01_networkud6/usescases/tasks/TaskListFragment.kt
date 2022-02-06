@@ -1,7 +1,6 @@
 package com.marta.ud6_01_networkud6.usescases.tasks
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -11,19 +10,12 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.marta.ud6_01_networkud6.databinding.FragmentTaskListBinding
-import com.marta.ud6_01_networkud6.model.TaskList
-import com.marta.ud6_01_networkud6.model.toEntityTaskList
-import com.marta.ud6_01_networkud6.provider.api.TaskApi
 import com.marta.ud6_01_networkud6.provider.db.DataBaseRepository
 import com.marta.ud6_01_networkud6.provider.db.entitties.TaskListEntity
-import com.marta.ud6_01_networkud6.provider.db.entitties.toListOfList
 import com.marta.ud6_01_networkud6.usescases.common.TaskListAdapter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 
 class TaskListFragment : Fragment() {
@@ -32,12 +24,11 @@ class TaskListFragment : Fragment() {
         get() = _binding!!
     private val lista: MutableList<TaskListEntity> = mutableListOf()
     private val adapter = TaskListAdapter({ deleteList(it) }) {
-        viewChange(it.listId, it.name)
+        viewChange(it)
     }
     private val userId: Int = 1
 
     //TODO Add a loading animation
-    //TODO crear una función que compruebe los ids de las listas antes de guardarlas
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -146,9 +137,10 @@ class TaskListFragment : Fragment() {
     }
 
     //Fragment navigation
-    private fun viewChange(listId: Int, listName: String) {
+    private fun viewChange(list: TaskListEntity) {
+
         val action =
-            TaskListFragmentDirections.actionTaskListFragmentToTasksFragment(listId, listName)
+            TaskListFragmentDirections.actionTaskListFragmentToTasksFragment(list.listId, list.name)
         findNavController().navigate(action)
     }
 }

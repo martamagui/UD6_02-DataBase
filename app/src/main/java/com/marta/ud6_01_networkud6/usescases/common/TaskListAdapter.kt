@@ -7,7 +7,6 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.marta.ud6_01_networkud6.databinding.ItemTasklistBinding
-import com.marta.ud6_01_networkud6.model.TaskList
 import com.marta.ud6_01_networkud6.provider.db.entitties.TaskListEntity
 import com.marta.ud6_01_networkud6.usescases.common.TaskListAdapter.ViewHolder
 

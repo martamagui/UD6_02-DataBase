@@ -10,17 +10,12 @@ import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
 import com.marta.ud6_01_networkud6.databinding.FragmentAddTaskBinding
-import com.marta.ud6_01_networkud6.model.Task
-import com.marta.ud6_01_networkud6.provider.api.TaskApi
 import com.marta.ud6_01_networkud6.provider.db.DataBaseRepository
 import com.marta.ud6_01_networkud6.provider.db.entitties.TaskEntity
-import com.marta.ud6_01_networkud6.provider.db.entitties.TaskListEntity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+
 
 
 class AddTaskFragment : Fragment() {
@@ -70,6 +65,7 @@ class AddTaskFragment : Fragment() {
             DataBaseRepository.getInstance(requireContext()).databaseDao().addTask(task)
             withContext(Dispatchers.Main){
                 clearTxtFiles()
+                Toast.makeText(context,"Guardado",Toast.LENGTH_SHORT).show()
             }
         }
     }

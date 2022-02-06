@@ -16,5 +16,3 @@ data class TaskListEntity(
     @ColumnInfo(name = "userFk")
     val userFk: Int
 )
-fun TaskListEntity.toTaskList(): TaskList= TaskList(listId,name, userFk)
-fun List<TaskListEntity>.toListOfList(): List<TaskList> = map { it.toTaskList() }
