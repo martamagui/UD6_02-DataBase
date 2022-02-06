@@ -92,6 +92,7 @@ class TaskListFragment : Fragment() {
         }
         val newList = TaskListEntity(id, title, 1)
         lista.add(newList)
+        lista.sortByDescending { it.listId }
         addListToDB(newList)
         updateRV()
         showHideMessage()
