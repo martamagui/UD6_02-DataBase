@@ -7,5 +7,5 @@ data class TaskList(
     val name: String,
     val userFk: Int
 )
-fun TaskList.toEntityTaskList(): TaskListEntity = TaskListEntity(listId,name, userFk)
-fun List<TaskList>.toListOfEntityList(): List<TaskListEntity> = map { it.toEntityTaskList() }
+//fun TaskList.toEntityTaskList(): TaskListEntity = TaskListEntity(listId,name, userFk)
+//fun List<TaskList>.toListOfEntityList(): List<TaskListEntity> = map { it.toEntityTaskList() }

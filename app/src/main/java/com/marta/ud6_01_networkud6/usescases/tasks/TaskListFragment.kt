@@ -1,11 +1,13 @@
 package com.marta.ud6_01_networkud6.usescases.tasks
 
+import android.os.Build
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -16,13 +18,17 @@ import com.marta.ud6_01_networkud6.usescases.common.TaskListAdapter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import org.w3c.dom.Entity
+import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.*
 
 
 class TaskListFragment : Fragment() {
     private var _binding: FragmentTaskListBinding? = null
     private val binding
         get() = _binding!!
-    private val lista: MutableList<TaskListEntity> = mutableListOf()
     private val adapter = TaskListAdapter({ deleteList(it) }) {
         viewChange(it)
     }
@@ -41,8 +47,8 @@ class TaskListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         setUI()
         viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
-            getAllMyLists()
-            updateRV()
+            val list : List<TaskListEntity> = getAllMyLists()
+            updateRV(list)
         }
     }
 
@@ -69,8 +75,8 @@ class TaskListFragment : Fragment() {
         binding.rvTaskList.layoutManager = LinearLayoutManager(context)
     }
 
-    private fun showHideMessage() {
-        if (lista.size > 0) {
+    private fun showHideMessage(list: List<TaskListEntity>) {
+        if (list.size > 0) {
             binding.tvNoList.visibility = View.INVISIBLE
         } else {
             binding.tvNoList.visibility = View.VISIBLE
@@ -81,9 +87,9 @@ class TaskListFragment : Fragment() {
         binding.tfNewList.setText("")
     }
 
-    private fun updateRV() {
-        adapter.submitList(lista)
-        showHideMessage()
+    private fun updateRV(list: List<TaskListEntity>) {
+        adapter.submitList(list)
+        showHideMessage(list)
     }
 
     private fun checkField(): Boolean {
@@ -94,22 +100,27 @@ class TaskListFragment : Fragment() {
     }
 
     //Utils
-    private fun getAnId(): Int {
-        var id: Int = 1
-        if (lista.size > 0) {
-            id = lista.get(0).listId + 1
-        }
-        return id
+//    private fun getAnId(): Int {
+//        var id: Int = 1
+//        if (lista.size > 0) {
+//            id = lista.get(0).listId + 1
+//        }
+//        return id
+//    }
+
+    private fun getDateAndTime(): String{
+        val sdf = SimpleDateFormat("dd/M/yyyy")
+        val currentDate : String = sdf.format(Date())
+        return currentDate
     }
 
     private fun addList(title: String) {
-        val newList = TaskListEntity(getAnId(), title, 1)
-        lista.add(newList)
-        lista.sortByDescending { it.listId }
+        val newList = TaskListEntity(0, title, getDateAndTime(),5, userId)
         viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
             addListToDB(newList)
-            updateRV()
-            showHideMessage()
+            val list : List<TaskListEntity> = getAllMyLists()
+            updateRV(list)
+            showHideMessage(list)
         }
         clearText()
         Toast.makeText(context, "Guardado", Toast.LENGTH_SHORT).show()
@@ -117,26 +128,24 @@ class TaskListFragment : Fragment() {
 
 
     //DataBase
-    private suspend fun addListToDB(lista: TaskListEntity) {
+    private suspend fun addListToDB(newList: TaskListEntity) {
         DataBaseRepository.getInstance(requireContext()).databaseDao()
-            .addList(lista)
+            .addList(newList)
     }
 
     private fun deleteList(item: TaskListEntity) {
-        lifecycleScope.launch(Dispatchers.IO) {
-            val list = item
+        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.Main) {
             DataBaseRepository.getInstance(requireContext()).databaseDao()
-                .deleteListAndItsTasks(list.listId)
-            lista.remove(item)
+                .deleteListAndItsTasks(item.listId)
+            val list : List<TaskListEntity> = getAllMyLists()
+            updateRV(list)
         }
     }
 
-    private suspend fun getAllMyLists() {
-        lista.clear()
-        lista.addAll(
-            DataBaseRepository.getInstance(requireContext()).databaseDao().findUserLists(userId)
-        )
-        lista.sortByDescending { it.listId }
+    private suspend fun getAllMyLists(): List<TaskListEntity> {
+        val list: List<TaskListEntity> = DataBaseRepository.getInstance(requireContext()).databaseDao().findUserLists(userId)
+        list.sortedByDescending { it.listId }
+        return list
     }
 
     //Navigation

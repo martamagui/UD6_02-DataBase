@@ -8,7 +8,6 @@ import androidx.lifecycle.lifecycleScope
 import com.marta.ud6_01_networkud6.databinding.ActivityMainBinding
 import com.marta.ud6_01_networkud6.model.Task
 import com.marta.ud6_01_networkud6.model.TaskList
-import com.marta.ud6_01_networkud6.model.toListOfEntityList
 import com.marta.ud6_01_networkud6.model.toTaskFromTaskEntity
 import com.marta.ud6_01_networkud6.provider.api.TaskApi
 import com.marta.ud6_01_networkud6.provider.db.DataBaseRepository
@@ -27,20 +26,4 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
     }
-    //DB
-    private fun addAllListsToDB(lista: MutableList<TaskList>) {
-        lifecycleScope.launch(Dispatchers.IO) {
-            DataBaseRepository.getInstance(applicationContext).databaseDao()
-                .addAllLists(lista.toListOfEntityList())
-        }
-    }
-    private fun addAllTasksToDB(tasks: MutableList<Task>) {
-        lifecycleScope.launch(Dispatchers.IO) {
-            DataBaseRepository.getInstance(applicationContext).databaseDao()
-                .addAllTask(tasks.toTaskFromTaskEntity())
-        }
-    }
-
-
-
 }

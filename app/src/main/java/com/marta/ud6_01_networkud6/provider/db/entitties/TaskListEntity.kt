@@ -13,6 +13,8 @@ data class TaskListEntity(
     val listId: Int,
     @ColumnInfo(name = "name")
     val name: String,
+    val date:String,
+    val priority: Int,
     @ColumnInfo(name = "userFk")
     val userFk: Int
 )
