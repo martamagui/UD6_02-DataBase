@@ -5,6 +5,7 @@ import com.marta.ud6_01_networkud6.provider.db.entitties.ListWithTasks
 import com.marta.ud6_01_networkud6.provider.db.entitties.TaskEntity
 import com.marta.ud6_01_networkud6.provider.db.entitties.TaskListEntity
 import com.marta.ud6_01_networkud6.provider.db.entitties.UserEntity
+import retrofit2.http.DELETE
 
 @Dao
 interface DataBaseDao {
@@ -54,8 +55,14 @@ interface DataBaseDao {
     suspend fun deleteTaskListById(listId: Int)
 
     @Query("DELETE FROM tasks WHERE listIdFk=:listId")
-    suspend fun deleteTaskFromTaskList(listId: Int)
+    suspend fun deleteTaskByFK(listId: Int)
+
+    suspend fun deleteListAndItsTasks(listId: Int){
+        deleteTaskListById(listId)
+        deleteTaskByFK(listId)
+    }
 
     @Delete
     suspend fun deleteTask(task: TaskEntity)
+
 }

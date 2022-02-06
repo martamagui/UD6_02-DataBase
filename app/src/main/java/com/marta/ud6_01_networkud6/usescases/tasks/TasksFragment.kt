@@ -85,7 +85,7 @@ class TasksFragment : Fragment() {
         binding.tvListTitle.text = "Eliminado"
         binding.fabAddTask.isEnabled = false
         binding.ivBin.visibility = View.GONE
-
+        binding.rvTasks.visibility = View.GONE
     }
 
     //Navigation
@@ -109,7 +109,7 @@ class TasksFragment : Fragment() {
 
     private fun deleteList(id: Int) {
         lifecycleScope.launch(Dispatchers.IO) {
-            DataBaseRepository.getInstance(requireContext()).databaseDao().deleteTaskListById(id)
+            DataBaseRepository.getInstance(requireContext()).databaseDao().deleteListAndItsTasks(id)
             withContext(Dispatchers.Main) {
                 deletedListview()
             }

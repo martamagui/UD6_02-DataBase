@@ -1,9 +1,6 @@
 package com.marta.ud6_01_networkud6.provider.db.entitties
 
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.Index
-import androidx.room.PrimaryKey
+import androidx.room.*
 
 @Entity(tableName = "user", indices = [Index(value = ["userId"], unique = true)])
 data class UserEntity(
