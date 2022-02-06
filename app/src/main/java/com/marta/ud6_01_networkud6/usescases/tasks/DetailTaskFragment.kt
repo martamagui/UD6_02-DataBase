@@ -107,7 +107,7 @@ class DetailTaskFragment : Fragment() {
 
     //Request
     private fun requestTaskById(taskId: Int) {
-        lifecycleScope.launch(Dispatchers.IO) {
+        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
             task =
                 DataBaseRepository.getInstance(requireContext()).databaseDao().findTaskById(taskId)
             withContext(Dispatchers.Main) {
@@ -117,7 +117,7 @@ class DetailTaskFragment : Fragment() {
     }
 
     private fun deleteTaskById() {
-        lifecycleScope.launch(Dispatchers.IO) {
+        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
             DataBaseRepository.getInstance(requireContext()).databaseDao().deleteTask(task)
             withContext(Dispatchers.Main) {
                 viewTotaskWasDeleted()
@@ -126,7 +126,7 @@ class DetailTaskFragment : Fragment() {
     }
 
     private fun editTask(editedTask: TaskEntity) {
-        lifecycleScope.launch(Dispatchers.IO) {
+        viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
             DataBaseRepository.getInstance(requireContext()).databaseDao()
                 .updateTask(editedTask)
             withContext(Dispatchers.Main) {
